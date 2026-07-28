@@ -1,0 +1,263 @@
+:root {
+  color-scheme: light;
+  --bg: #eef0ed;
+  --panel: #ffffff;
+  --ink: #15191d;
+  --muted: #626b71;
+  --line: #d9ddd8;
+  --accent: #167d8a;
+  --accent-2: #c58b28;
+  --shadow: 0 16px 48px rgba(22, 25, 29, 0.16);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  overflow: hidden;
+  font-family:
+    Inter,
+    "Noto Sans",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 330px minmax(0, 1fr);
+  width: 100vw;
+  height: 100vh;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-width: 0;
+  padding: 22px 18px;
+  background: var(--panel);
+  border-right: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  z-index: 2;
+  overflow: auto;
+}
+
+header p {
+  margin: 0 0 5px;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  margin: 0;
+  letter-spacing: 0;
+}
+
+h1 {
+  font-size: 24px;
+  line-height: 1.12;
+}
+
+h2 {
+  margin-bottom: 9px;
+  font-size: 13px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.variant-control {
+  display: grid;
+  gap: 7px;
+}
+
+.variant-control h2 {
+  margin-bottom: 0;
+}
+
+.variant-segmented {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.variant-title {
+  min-height: 18px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f5f6f4;
+}
+
+.segmented button {
+  height: 34px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+}
+
+.segmented button.active {
+  color: #fff;
+  background: var(--accent);
+}
+
+.toggles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.toggles label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--muted);
+  background: #fafafa;
+}
+
+.toggles input {
+  margin: 0 6px 0 0;
+  accent-color: var(--accent);
+}
+
+.equipment-list {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.equipment-list button {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 8px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.equipment-list button:hover,
+.equipment-list button:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.equipment-list .code {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid #1a1f23;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.equipment-list .label {
+  display: block;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.equipment-list .room {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stage {
+  position: relative;
+  min-width: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(238, 240, 237, 0.9)),
+    #eef0ed;
+}
+
+#scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.status {
+  position: absolute;
+  left: 18px;
+  bottom: 18px;
+  min-width: 180px;
+  max-width: min(520px, calc(100vw - 380px));
+  padding: 9px 11px;
+  border: 1px solid rgba(21, 25, 29, 0.12);
+  border-radius: 8px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  font-size: 13px;
+}
+
+@media (max-width: 800px) {
+  body {
+    overflow: auto;
+  }
+
+  .shell {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(440px, 1fr);
+    min-height: 100vh;
+    height: auto;
+  }
+
+  .panel {
+    max-height: 48vh;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stage {
+    height: 52vh;
+    min-height: 440px;
+  }
+
+  .status {
+    max-width: calc(100vw - 36px);
+  }
+}

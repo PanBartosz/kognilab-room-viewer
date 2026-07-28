@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>KogniLab 307/308 - model 3D</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./vendor/three.module.js",
+          "three/addons/": "./vendor/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="panel" aria-label="Panel modelu">
+        <header>
+          <p>KogniLab</p>
+          <h1>Pomieszczenia 307/308</h1>
+        </header>
+
+        <section class="variant-control" aria-labelledby="variant-heading">
+          <h2 id="variant-heading">Wariant układu</h2>
+          <div class="segmented variant-segmented" aria-label="Wariant aranżacji">
+            <button class="active" type="button" data-variant="a" title="Układ rozproszony">A</button>
+            <button type="button" data-variant="b" title="Zabudowa U i magazyn">B</button>
+          </div>
+          <p id="variant-title" class="variant-title">Układ rozproszony</p>
+        </section>
+
+        <nav class="segmented" aria-label="Widoki kamery">
+          <button class="active" type="button" data-view="overview">Całość</button>
+          <button type="button" data-view="room307">307</button>
+          <button type="button" data-view="room308">308</button>
+          <button type="button" data-view="top">Rzut</button>
+        </nav>
+
+        <section class="toggles" aria-label="Warstwy">
+          <label><input type="checkbox" id="toggle-ceilings" checked /> Skosy</label>
+          <label><input type="checkbox" id="toggle-zones" checked /> Strefy</label>
+          <label><input type="checkbox" id="toggle-cables" checked /> Trasy</label>
+        </section>
+
+        <section>
+          <h2>Zespoły wyposażenia</h2>
+          <ol id="equipment-list" class="equipment-list"></ol>
+        </section>
+      </aside>
+
+      <main class="stage">
+        <canvas id="scene"></canvas>
+        <div id="status" class="status">Ładowanie modelu</div>
+      </main>
+    </div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

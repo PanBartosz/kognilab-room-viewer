@@ -1,0 +1,8 @@
+services:
+  viewer:
+    build:
+      context: .
+    image: kognilab-room-viewer:local
+    ports:
+      - "${VIEWER_PORT:-8080}:8080"
+    restart: unless-stopped

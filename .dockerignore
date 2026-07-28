@@ -1,0 +1,7 @@
+.git
+.github
+.playwright-cli
+dist
+node_modules
+vendor
+README.md

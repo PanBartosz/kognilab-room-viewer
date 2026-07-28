@@ -1,0 +1,12 @@
+{
+  "name": "kognilab-room-viewer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "three": "^0.179.0"
+  }
+}

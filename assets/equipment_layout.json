@@ -1,0 +1,648 @@
+{
+  "project": "KogniLab - recommended equipment layout",
+  "variant": {
+    "id": "A",
+    "label": "Wariant A",
+    "name": "Układ rozproszony",
+    "summary": "Dwa stanowiska pod skosem w 308 oraz mieszany układ pracy, spotkań i magazynu w 307."
+  },
+  "units": "m",
+  "status": "recommended functional layout updated with on-site furniture measurements",
+  "design_date": "2026-07-22",
+  "design_principles": [
+    "Pomieszczenie 308 łączy główną salę eksperymentalną VR z dwoma stanowiskami siedzącymi umieszczonymi poza strefą ruchu.",
+    "Stanowisko eyetrackingowe stoi przy ścianie wspólnej z 307 i nie ma lokalnej stacji roboczej; aktywne lub światłowodowe USB 3.x prowadzi do komputera w 307.",
+    "Stanowisko PC-VR stoi przy przeciwległej ścianie, co skraca trasę do strefy uczestnika i pozostawia południową część pokoju wolną.",
+    "Stanowisko eyetrackingowe wykorzystuje stół 155 x 75 cm, a stanowisko PC-VR biurko 132 x 67 x 76 cm; oba stoją w wyższej części pasa pod skosem.",
+    "Aparatura fizjologiczna pozostaje na mobilnym wózku parkowanym po wschodniej stronie grzejnika i jest dosuwana do uczestnika tylko na czas pomiaru.",
+    "Pomieszczenie 307 ma dwa stanowiska pod skosem; zachodnie jest przesunięte głębiej, a stacja RTX 5080 stoi przy ścianie wspólnej z 308 i obsługuje eyetracker przez krótki przepust.",
+    "Stół 155 x 75 cm przy zachodniej ścianie zapewnia cztery miejsca w układzie 2 + 1 + 1 i służy spotkaniom oraz przygotowaniu sensorów.",
+    "Pas pod skosem 307 mieści stanowiska siedzące oraz dwie istniejące szafki szufladowe 36,5 x 90 x 70 cm przeznaczone do ładowania i magazynowania VR.",
+    "Południowo-wschodni narożnik 307 pozostaje strefą serwisową wiszącej szafy serwerowej o obrysie 75 x 60 cm i dolnej krawędzi na wysokości 120 cm.",
+    "Grzejnik pod oknem O14 w 308 pozostaje nieprzesłonięty; jego dokładny wymiar wymaga dodatkowego pomiaru.",
+    "Jeden regał 3-segmentowy 120 x 42 x 206 cm stoi przy wschodniej ścianie 307 między wiszącą szafą serwerową a biurkiem; kończy się przed linią skosu.",
+    "Szafka pod drukarkę nie jest rozmieszczana w wariancie rekomendowanym ze względu na brak funkcjonalnej lokalizacji.",
+    "Przewody są prowadzone po obwodzie, poza strefą room-scale, z jednym kontrolowanym przepustem między 307 i 308."
+  ],
+  "furniture_inventory": [
+    {
+      "source_room": "43",
+      "label": "Biurko #1",
+      "quantity": 1,
+      "dimensions_cm": "120 x 60 x 76",
+      "placement": "307 - stanowisko dokumentacyjne",
+      "status": "placed"
+    },
+    {
+      "source_room": "43",
+      "label": "Biurko Kasi",
+      "quantity": 1,
+      "dimensions_cm": "132 x 67 x 76",
+      "placement": "308 - stanowisko PC-VR",
+      "status": "placed"
+    },
+    {
+      "source_room": "44",
+      "label": "Biurko",
+      "quantity": 1,
+      "dimensions_cm": "120 x 60 x 76",
+      "placement": "307 - stacja obliczeniowa eyetrackingu",
+      "status": "placed"
+    },
+    {
+      "source_room": "44",
+      "label": "Stół",
+      "quantity": 2,
+      "dimensions_cm": "155 x 75; wysokość przyjęta roboczo 75",
+      "placement": "308 - eyetracking; 307 - stół spotkań",
+      "status": "placed"
+    },
+    {
+      "source_room": "43",
+      "label": "Mała szafka z szufladami",
+      "quantity": 2,
+      "dimensions_cm": "36,5 x 90 x 70",
+      "placement": "307 - magazyn i ładowanie VR pod skosem",
+      "status": "placed"
+    },
+    {
+      "source_room": "43/44",
+      "label": "Szafka na śmieci/segregatory",
+      "quantity": 2,
+      "dimensions_cm": "60 x 40 x 130",
+      "placement": "obie pozostają poza wariantem po zastąpieniu roboczej szafki regałem 3-segmentowym",
+      "status": "not_placed"
+    },
+    {
+      "source_room": "43",
+      "label": "Regał 3-segmentowy",
+      "quantity": 1,
+      "dimensions_cm": "120 x 42 x 206",
+      "placement": "307 - przy wschodniej ścianie między szafą serwerową a biurkiem",
+      "status": "placed"
+    },
+    {
+      "source_room": "43",
+      "label": "Szafka pod drukarkę",
+      "quantity": 1,
+      "dimensions_cm": "80 x 45 x 122",
+      "placement": "brak lokalizacji w wariancie rekomendowanym",
+      "status": "not_placed"
+    }
+  ],
+  "zones": [
+    {
+      "id": "zone_308_primary_vr",
+      "room": "308",
+      "label": "308: główna strefa VR room-scale 3,17 x 3,20 m (10,14 m2)",
+      "kind": "primary_vr",
+      "x": 4.40,
+      "y": 0.60,
+      "w": 3.17,
+      "d": 3.20
+    },
+    {
+      "id": "zone_308_low_service_band",
+      "room": "308",
+      "label": "308: pas pracy siedzącej i parkowania pod skosem",
+      "kind": "low_service",
+      "x": 4.03,
+      "y": 3.90,
+      "w": 3.91,
+      "d": 2.14
+    },
+    {
+      "id": "zone_308_radiator_keepout",
+      "room": "308",
+      "label": "308: grzejnik pod oknem O14 - robocza koperta, wymiar do pomiaru",
+      "kind": "fixed_obstacle",
+      "x": 5.14,
+      "y": 5.64,
+      "w": 1.40,
+      "d": 0.40
+    },
+    {
+      "id": "zone_307_meeting",
+      "room": "307",
+      "label": "307: stół spotkań i przygotowania sensorów - 4 miejsca",
+      "kind": "collaboration",
+      "x": 0.00,
+      "y": 1.59,
+      "w": 1.50,
+      "d": 2.31
+    },
+    {
+      "id": "zone_307_prep_storage",
+      "room": "307",
+      "label": "307: pas pracy siedzącej, ładowania i magazynu pod skosem",
+      "kind": "low_service",
+      "x": 0.00,
+      "y": 3.90,
+      "w": 3.71,
+      "d": 2.14
+    },
+    {
+      "id": "zone_307_existing_server_keepout",
+      "room": "307",
+      "label": "307: wisząca szafa serwerowa 75 x 60 cm i roboczy dostęp serwisowy",
+      "kind": "fixed_obstacle",
+      "x": 2.36,
+      "y": 1.59,
+      "w": 1.35,
+      "d": 1.05
+    }
+  ],
+  "equipment": [
+    {
+      "id": "desk_308_eyetracking",
+      "room": "308",
+      "type": "desk",
+      "label": "Stół 155 x 75 cm z sali 44 - stanowisko eyetrackingowe",
+      "x": 4.11,
+      "y": 4.02,
+      "w": 0.75,
+      "d": 1.55,
+      "h": 0.75,
+      "wall_side": "west"
+    },
+    {
+      "id": "monitor_308_eyetracking",
+      "room": "308",
+      "type": "monitor",
+      "label": "Monitor stanowiska eyetrackingowego",
+      "x": 4.38,
+      "y": 4.80,
+      "facing": "west"
+    },
+    {
+      "id": "eye_tracker_308",
+      "room": "308",
+      "type": "eye_tracker",
+      "label": "Eyetracker montowany pod monitorem",
+      "x": 4.41,
+      "y": 4.80,
+      "z": 0.84,
+      "length": 0.34,
+      "facing": "west"
+    },
+    {
+      "id": "keyboard_308_eyetracking",
+      "room": "308",
+      "type": "keyboard",
+      "label": "Klawiatura i mysz stanowiska eyetrackingowego",
+      "x": 4.72,
+      "y": 4.80,
+      "facing": "west"
+    },
+    {
+      "id": "chair_308_eyetracking",
+      "room": "308",
+      "type": "chair",
+      "label": "Krzesło uczestnika badania eyetrackingowego",
+      "x": 5.20,
+      "y": 4.80,
+      "w": 0.48,
+      "d": 0.48,
+      "facing": "west"
+    },
+    {
+      "id": "desk_308_vr",
+      "room": "308",
+      "type": "desk",
+      "label": "Biurko Kasi 132 x 67 x 76 cm z sali 43 - stanowisko PC-VR",
+      "x": 7.19,
+      "y": 4.02,
+      "w": 0.67,
+      "d": 1.32,
+      "h": 0.76,
+      "wall_side": "east"
+    },
+    {
+      "id": "pc_308_rtx5090",
+      "room": "308",
+      "type": "pc_tower",
+      "label": "Stacja robocza RTX 5090",
+      "x": 7.55,
+      "y": 4.08,
+      "w": 0.24,
+      "d": 0.40,
+      "h": 0.54
+    },
+    {
+      "id": "monitor_308_vr",
+      "room": "308",
+      "type": "monitor",
+      "label": "Monitor 27 cali",
+      "x": 7.65,
+      "y": 4.68,
+      "facing": "east"
+    },
+    {
+      "id": "keyboard_308_vr",
+      "room": "308",
+      "type": "keyboard",
+      "label": "Klawiatura i mysz",
+      "x": 7.38,
+      "y": 4.68,
+      "facing": "east"
+    },
+    {
+      "id": "chair_308_vr",
+      "room": "308",
+      "type": "chair",
+      "label": "Krzesło operatora",
+      "x": 6.86,
+      "y": 4.68,
+      "w": 0.48,
+      "d": 0.48,
+      "facing": "east"
+    },
+    {
+      "id": "ups_308",
+      "room": "308",
+      "type": "ups",
+      "label": "UPS przy stacji głównej",
+      "x": 7.22,
+      "y": 4.10,
+      "w": 0.28,
+      "d": 0.42,
+      "h": 0.22
+    },
+    {
+      "id": "router_ap_308",
+      "room": "308",
+      "type": "router",
+      "label": "Router/AP Wi-Fi 7 w linii widzenia",
+      "x": 7.48,
+      "y": 0.10,
+      "z": 1.28,
+      "w": 0.30,
+      "d": 0.14,
+      "h": 0.40
+    },
+    {
+      "id": "radiator_308",
+      "room": "308",
+      "type": "radiator",
+      "label": "Grzejnik pod oknem O14 - gabaryt roboczy do pomiaru",
+      "x": 5.24,
+      "y": 5.92,
+      "z": 0.12,
+      "w": 1.20,
+      "d": 0.12,
+      "h": 0.60
+    },
+    {
+      "id": "physio_cart_308",
+      "room": "308",
+      "type": "physio_cart",
+      "label": "Mobilny wózek PLUX i sensory - pozycja parkowania",
+      "x": 6.60,
+      "y": 5.35,
+      "w": 0.55,
+      "d": 0.64,
+      "h": 0.74
+    },
+    {
+      "id": "participant_308",
+      "room": "308",
+      "type": "vr_participant",
+      "label": "Uczestnik: VIVE Focus Vision + TactSuit + trackery",
+      "x": 5.99,
+      "y": 2.20,
+      "h": 1.72
+    },
+    {
+      "id": "desk_307_control",
+      "room": "307",
+      "type": "desk",
+      "label": "Biurko 120 x 60 x 76 cm z sali 44 - stanowisko kontroli eyetrackingu",
+      "x": 3.03,
+      "y": 4.02,
+      "w": 0.60,
+      "d": 1.20,
+      "h": 0.76,
+      "wall_side": "east"
+    },
+    {
+      "id": "pc_307_rtx5080",
+      "room": "307",
+      "type": "pc_tower",
+      "label": "Stacja robocza RTX 5080",
+      "x": 3.38,
+      "y": 4.08,
+      "w": 0.23,
+      "d": 0.40,
+      "h": 0.52
+    },
+    {
+      "id": "monitor_307_control",
+      "room": "307",
+      "type": "monitor",
+      "label": "Monitor 27 cali",
+      "x": 3.47,
+      "y": 4.62,
+      "facing": "east"
+    },
+    {
+      "id": "keyboard_307_control",
+      "room": "307",
+      "type": "keyboard",
+      "label": "Klawiatura i mysz",
+      "x": 3.22,
+      "y": 4.62,
+      "facing": "east"
+    },
+    {
+      "id": "chair_307_control",
+      "room": "307",
+      "type": "chair",
+      "label": "Krzesło operatora",
+      "x": 2.71,
+      "y": 4.62,
+      "w": 0.46,
+      "d": 0.46,
+      "facing": "east"
+    },
+    {
+      "id": "desk_307_documentation",
+      "room": "307",
+      "type": "desk",
+      "label": "Biurko #1 120 x 60 x 76 cm z sali 43 - stanowisko dokumentacji",
+      "x": 0.08,
+      "y": 4.34,
+      "w": 0.60,
+      "d": 1.20,
+      "h": 0.76,
+      "wall_side": "west"
+    },
+    {
+      "id": "monitor_307_documentation",
+      "room": "307",
+      "type": "monitor",
+      "label": "Ekran podglądu / dokumentacja",
+      "x": 0.29,
+      "y": 4.94,
+      "facing": "west"
+    },
+    {
+      "id": "keyboard_307_documentation",
+      "room": "307",
+      "type": "keyboard",
+      "label": "Klawiatura i mysz stanowiska dokumentacyjnego",
+      "x": 0.55,
+      "y": 4.94,
+      "facing": "west"
+    },
+    {
+      "id": "chair_307_documentation",
+      "room": "307",
+      "type": "chair",
+      "label": "Krzesło robocze",
+      "x": 0.99,
+      "y": 4.94,
+      "w": 0.46,
+      "d": 0.46,
+      "facing": "west"
+    },
+    {
+      "id": "segment_cabinet_307",
+      "room": "307",
+      "type": "segment_cabinet",
+      "label": "Regał 3-segmentowy 120 x 42 x 206 cm z sali 43",
+      "x": 3.29,
+      "y": 2.70,
+      "w": 0.42,
+      "d": 1.20,
+      "h": 2.06,
+      "segment_heights": [0.65, 0.76, 0.65],
+      "front_side": "west"
+    },
+    {
+      "id": "prep_counter_307",
+      "room": "307",
+      "type": "conference_table",
+      "label": "Stół 155 x 75 cm z sali 44 - spotkania i przygotowanie PLUX",
+      "x": 0.08,
+      "y": 2.18,
+      "w": 0.75,
+      "d": 1.55,
+      "h": 0.75
+    },
+    {
+      "id": "chair_307_meeting_east_south",
+      "room": "307",
+      "type": "chair",
+      "label": "Krzesło przy stole - bok, południe",
+      "x": 1.18,
+      "y": 2.58,
+      "w": 0.46,
+      "d": 0.46,
+      "facing": "west"
+    },
+    {
+      "id": "chair_307_meeting_east_north",
+      "room": "307",
+      "type": "chair",
+      "label": "Krzesło przy stole - bok, północ",
+      "x": 1.18,
+      "y": 3.28,
+      "w": 0.46,
+      "d": 0.46,
+      "facing": "west"
+    },
+    {
+      "id": "chair_307_meeting_south",
+      "room": "307",
+      "type": "chair",
+      "label": "Krzesło przy krótszym boku od strony drzwi",
+      "x": 0.455,
+      "y": 1.85,
+      "w": 0.46,
+      "d": 0.46,
+      "facing": "north"
+    },
+    {
+      "id": "chair_307_meeting_north",
+      "room": "307",
+      "type": "chair",
+      "label": "Krzesło przy krótszym boku od strony skosu",
+      "x": 0.455,
+      "y": 4.01,
+      "w": 0.46,
+      "d": 0.46,
+      "facing": "south"
+    },
+    {
+      "id": "drawer_cabinet_307_a",
+      "room": "307",
+      "type": "storage",
+      "label": "Szafka szufladowa 36,5 x 90 x 70 cm - VR i ładowanie 1",
+      "x": 1.20,
+      "y": 5.14,
+      "w": 0.365,
+      "d": 0.90,
+      "h": 0.70,
+      "contents": "vr_charging",
+      "charging_slots": 2
+    },
+    {
+      "id": "drawer_cabinet_307_b",
+      "room": "307",
+      "type": "storage",
+      "label": "Szafka szufladowa 36,5 x 90 x 70 cm - VR i ładowanie 2",
+      "x": 1.65,
+      "y": 5.14,
+      "w": 0.365,
+      "d": 0.90,
+      "h": 0.70,
+      "contents": "vr_charging",
+      "charging_slots": 1
+    },
+    {
+      "id": "haptics_wall_307",
+      "room": "307",
+      "type": "haptic_wall_storage",
+      "label": "Samodzielny wieszak ścienny: TactSuit Pro i TactGlove DK3",
+      "x": 0.00,
+      "y": 3.84,
+      "w": 0.12,
+      "d": 0.40,
+      "h": 1.30,
+      "wall_side": "west"
+    },
+    {
+      "id": "existing_server_307",
+      "room": "307",
+      "type": "existing_server",
+      "label": "Wisząca szafa serwerowa - obrys 75 x 60 cm, dolna krawędź 120 cm",
+      "x": 3.11,
+      "y": 1.67,
+      "z": 1.20,
+      "w": 0.60,
+      "d": 0.75,
+      "h": 0.60,
+      "wall_side": "east",
+      "height_note": "Wysokość korpusu 60 cm jest roboczym założeniem; podano tylko obrys 75 x 60 cm i poziom zawieszenia."
+    }
+  ],
+  "cable_paths": [
+    {
+      "id": "cable_pc308_to_vr_zone",
+      "label": "Trasa serwisowa PC-VR do punktu brzegowego; sesje room-scale bezprzewodowo",
+      "kind": "pc_vr",
+      "points": [[7.58, 4.26], [7.73, 4.26], [7.73, 3.84], [7.58, 3.84]]
+    },
+    {
+      "id": "cable_eyetracker_308_to_pc307",
+      "label": "Aktywne lub światłowodowe USB 3.x przez kontrolowany przepust 308-307",
+      "kind": "planned",
+      "points": [[4.41, 4.80], [4.03, 4.80], [3.71, 4.80], [3.52, 4.80], [3.52, 4.24]]
+    },
+    {
+      "id": "cable_rack_to_307_desks",
+      "label": "LAN/zasilanie stanowisk 307",
+      "kind": "lan_power",
+      "points": [[3.41, 3.18], [3.66, 3.18], [3.66, 3.82], [0.55, 3.82], [0.55, 4.62]]
+    },
+    {
+      "id": "cable_rack_to_308_ap",
+      "label": "Planowana trasa sieci do AP 308 - do potwierdzenia na miejscu",
+      "kind": "planned",
+      "points": [[3.50, 3.35], [3.66, 3.35], [3.66, 3.86], [4.03, 3.86], [7.73, 3.86], [7.73, 0.35]]
+    }
+  ],
+  "schedule_groups": [
+    {
+      "code": "A",
+      "room": "308",
+      "label": "Stanowisko operatorskie PC-VR pod skosem",
+      "items": ["desk_308_vr", "pc_308_rtx5090", "monitor_308_vr", "keyboard_308_vr", "chair_308_vr", "ups_308"],
+      "role": "Biurko 132 x 67 x 76 cm; uruchamianie scen VR i rejestracja danych. Room-scale korzysta z transmisji bezprzewodowej, a tor przewodowy kończy się przy krawędzi strefy."
+    },
+    {
+      "code": "B",
+      "room": "308",
+      "label": "Strefa uczestnika VR",
+      "items": ["participant_308"],
+      "role": "Bezpieczna strefa ruchu, VIVE Focus Vision, TactSuit, kontrolery oraz trackery montowane na uczestniku lub śledzonych obiektach."
+    },
+    {
+      "code": "C",
+      "room": "308",
+      "label": "Aparatura fizjologiczna przy badaniu",
+      "items": ["physio_cart_308"],
+      "role": "PLUX hub, sensory i przewody na mobilnym wózku parkowanym po wschodniej stronie grzejnika, poza główną strefą ruchu."
+    },
+    {
+      "code": "D",
+      "room": "308",
+      "label": "Sieć bezprzewodowa VR",
+      "items": ["router_ap_308"],
+      "role": "Router/AP Wi-Fi 7 umieszczony wysoko, z linią widzenia na strefę VR."
+    },
+    {
+      "code": "R",
+      "room": "308",
+      "label": "Grzejnik pod oknem O14",
+      "items": ["radiator_308"],
+      "role": "Element zastany. Model pokazuje roboczy gabaryt i kopertę, których dokładne wymiary trzeba uzupełnić po pomiarze."
+    },
+    {
+      "code": "E",
+      "room": "308",
+      "label": "Stanowisko badań eyetrackingowych",
+      "items": ["desk_308_eyetracking", "monitor_308_eyetracking", "eye_tracker_308", "keyboard_308_eyetracking", "chair_308_eyetracking"],
+      "role": "Stół 155 x 75 cm z monitorem, klawiaturą, myszą i eyetrackerem, bez lokalnego komputera; stacja obliczeniowa znajduje się w 307."
+    },
+    {
+      "code": "F",
+      "room": "307",
+      "label": "Stacja obliczeniowa eyetrackingu i kontroli",
+      "items": ["desk_307_control", "pc_307_rtx5080", "monitor_307_control", "keyboard_307_control", "chair_307_control"],
+      "role": "RTX 5080 pod skosem przy ścianie wspólnej z 308: obsługa eyetrackera, kontrola sesji, analiza danych i prace rozwojowe."
+    },
+    {
+      "code": "G",
+      "room": "307",
+      "label": "Stanowisko dokumentacji pod skosem",
+      "items": ["desk_307_documentation", "monitor_307_documentation", "keyboard_307_documentation", "chair_307_documentation"],
+      "role": "Dokumentacja sesji, formularze, krótkie instruktaże i obsługa pomocnicza."
+    },
+    {
+      "code": "H",
+      "room": "307",
+      "label": "Regał 3-segmentowy",
+      "items": ["segment_cabinet_307"],
+      "role": "Istniejący regał 120 x 42 x 206 cm między szafą serwerową a biurkiem; trzy segmenty służą magazynowaniu sprzętu, przewodów i dokumentacji."
+    },
+    {
+      "code": "I",
+      "room": "307",
+      "label": "Stół spotkań i przygotowania PLUX",
+      "items": ["prep_counter_307", "chair_307_meeting_east_south", "chair_307_meeting_east_north", "chair_307_meeting_south", "chair_307_meeting_north"],
+      "role": "Cztery miejsca w układzie 2 + 1 + 1; spotkania, praca z laptopami oraz czasowe przygotowanie sensorów PLUX."
+    },
+    {
+      "code": "J",
+      "room": "307",
+      "label": "Magazyn i ładowanie VR",
+      "items": ["drawer_cabinet_307_a", "drawer_cabinet_307_b"],
+      "role": "Dwie istniejące szafki szufladowe 36,5 x 90 x 70 cm pod najniższą częścią skosu: headsety, baterie, trackery i drobne akcesoria."
+    },
+    {
+      "code": "K",
+      "room": "307",
+      "label": "Haptyka",
+      "items": ["haptics_wall_307"],
+      "role": "TactSuit Pro na samodzielnym wieszaku przy zachodniej ścianie, TactGlove DK3 w niskiej szafce; bez osobnej podstawy podłogowej."
+    },
+    {
+      "code": "X",
+      "room": "307",
+      "label": "Wisząca szafa serwerowa - strefa serwisowa",
+      "items": ["existing_server_307"],
+      "role": "Element zastany na ścianie wspólnej z 308: obrys 75 x 60 cm, dolna krawędź 120 cm. Wysokość korpusu i wymagany dostęp serwisowy pozostają do potwierdzenia."
+    }
+  ]
+}
