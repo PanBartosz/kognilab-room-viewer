@@ -1,340 +1,321 @@
-import * as THREE from "three";
-import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { createViewer } from "./scene.js";
 
-const canvas = document.querySelector("#scene");
-const statusEl = document.querySelector("#status");
-const equipmentListEl = document.querySelector("#equipment-list");
-const variantTitleEl = document.querySelector("#variant-title");
-
+const $ = selector => document.querySelector(selector);
+const all = selector => [...document.querySelectorAll(selector)];
 const variants = {
-  a: {
-    layout: "./assets/equipment_layout_a.json",
-    model: "./assets/kogni_lab_equipped_307_308.glb",
-  },
-  b: {
-    layout: "./assets/equipment_layout_b.json",
-    model: "./assets/kogni_lab_equipped_307_308_variant_b.glb",
-  },
+  a: { layout: "./assets/equipment_layout_a.json", model: "./assets/kogni_lab_equipped_307_308.glb" },
+  b: { layout: "./assets/equipment_layout_b.json", model: "./assets/kogni_lab_equipped_307_308_variant_b.glb" },
 };
+const layerNames = ["walls", "ceilings", "zones", "cables"];
+const number = (value, digits = 1) => value.toLocaleString("pl-PL", { maximumFractionDigits: digits });
+const normalize = text => text.toLocaleLowerCase("pl").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l");
+let state = readLocation();
+let layout;
+let viewer;
+let busy = false;
+let sequence = 0;
+let retryVariant = state.variant;
+let statusTimer;
+const cache = new Map(); // Two variants, fetched and decoded at most once per session.
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.shadowMap.enabled = true;
-
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xf3f4f1);
-
-const camera = new THREE.PerspectiveCamera(43, 1, 0.01, 1000);
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.08;
-controls.screenSpacePanning = true;
-
-const hemi = new THREE.HemisphereLight(0xffffff, 0xd7d0c4, 2.3);
-scene.add(hemi);
-
-const key = new THREE.DirectionalLight(0xffffff, 2.2);
-key.position.set(4.5, 7.5, 5.5);
-key.castShadow = true;
-scene.add(key);
-
-const fill = new THREE.DirectionalLight(0xffffff, 0.9);
-fill.position.set(-5.5, 5.0, -4.0);
-scene.add(fill);
-
-let model = null;
-let layout = null;
-let activeVariant = "a";
-let loadSequence = 0;
-let activeView = "overview";
-const layerVisibility = { ceilings: true, zones: true, cables: true };
-const raycaster = new THREE.Raycaster();
-const pointer = new THREE.Vector2();
-
-function resize() {
-  const { clientWidth, clientHeight } = canvas.parentElement;
-  renderer.setSize(clientWidth, clientHeight, false);
-  camera.aspect = clientWidth / Math.max(1, clientHeight);
-  camera.updateProjectionMatrix();
-}
-
-function cleanName(name) {
-  return name
-    .replace(/_/g, " ")
-    .replace(/\bObj\b/g, "")
-    .replace(/\bsegment\s+\d+\b/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function objectBox(predicate) {
-  const box = new THREE.Box3();
-  let found = false;
-  if (!model) return null;
-  model.traverse((object) => {
-    if (!object.isMesh || !predicate(object)) return;
-    box.expandByObject(object);
-    found = true;
-  });
-  return found ? box : null;
-}
-
-function fitBox(box, view = "iso") {
-  if (!box || box.isEmpty()) return;
-  const center = box.getCenter(new THREE.Vector3());
-  const size = box.getSize(new THREE.Vector3());
-  const fov = THREE.MathUtils.degToRad(camera.fov);
-  const radius = Math.max(size.length() * 0.5, 1);
-  const fitScale = {
-    iso: 1.15,
-    room307: 0.9,
-    room308: 0.9,
-    top: 0.72,
-  }[view] ?? 1.2;
-  const distance = (radius / Math.sin(fov / 2)) * fitScale;
-  let direction = new THREE.Vector3(0.9, 0.72, 1.0).normalize();
-
-  camera.up.set(0, 1, 0);
-  if (view === "room307") {
-    direction = new THREE.Vector3(-0.75, 0.72, 1.05).normalize();
-  } else if (view === "room308") {
-    direction = new THREE.Vector3(0.82, 0.72, 1.08).normalize();
-  } else if (view === "top") {
-    direction = new THREE.Vector3(0.001, 1, 0.001).normalize();
-    camera.up.set(0, 0, -1);
-  }
-
-  camera.position.copy(center).add(direction.multiplyScalar(distance));
-  camera.near = Math.max(0.01, distance / 100);
-  camera.far = distance * 100;
-  camera.updateProjectionMatrix();
-  controls.target.copy(center);
-  controls.update();
-}
-
-function focusView(view) {
-  activeView = view;
-  if (view === "top") {
-    layerVisibility.ceilings = false;
-    document.querySelector("#toggle-ceilings").checked = false;
-  }
-  document.querySelectorAll("[data-view]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.view === view);
-  });
-  updateModelVisibility();
-  const belongsToRoom = (object, room) => {
-    const name = object.name.toLowerCase();
-    if (name.startsWith("cable_") || name.includes(" cable ")) return false;
-    return name.includes(`_${room}`) || name.includes(`room_${room}`);
+function readLocation() {
+  const params = new URLSearchParams(location.hash.slice(1));
+  const visible = params.has("layers") ? params.get("layers").split(",") : ["walls", "zones", "cables"];
+  return {
+    variant: params.get("variant") === "b" ? "b" : "a",
+    room: ["307", "308"].includes(params.get("room")) ? params.get("room") : "all",
+    projection: params.get("view") === "2d" ? "2d" : "3d",
+    layers: Object.fromEntries(layerNames.map(key => [key, visible.includes(key)])),
+    selected: params.get("item") || null,
   };
-  if (view === "room307") {
-    fitBox(objectBox((object) => belongsToRoom(object, "307")), "room307");
-  } else if (view === "room308") {
-    fitBox(objectBox((object) => belongsToRoom(object, "308")), "room308");
-  } else if (view === "top") {
-    fitBox(objectBox(() => true), "top");
-  } else {
-    fitBox(objectBox(() => true), "iso");
-  }
 }
-
-function setLayerVisibility(kind, visible) {
-  layerVisibility[kind] = visible;
-  updateModelVisibility();
+function syncLocation() {
+  const params = new URLSearchParams({ variant: state.variant, room: state.room, view: state.projection, layers: layerNames.filter(key => state.layers[key]).join(",") });
+  if (state.selected) params.set("item", state.selected);
+  const url = new URL(location.href);
+  url.hash = params.toString();
+  history.replaceState(null, "", url);
 }
-
-function updateModelVisibility() {
-  if (!model) return;
-  model.traverse((object) => {
-    if (!object.isMesh) return;
-    const name = object.name.toLowerCase();
-    const belongs307 = name.includes("307");
-    const belongs308 = name.includes("308");
-    const hiddenByRoom =
-      (activeView === "room307" && belongs308 && !belongs307) ||
-      (activeView === "room308" && belongs307 && !belongs308);
-    const isCeiling = name.includes("ceiling") || name.includes("roof_window");
-    const hiddenByLayer =
-      (isCeiling && !layerVisibility.ceilings) ||
-      (name.includes("zone") && !layerVisibility.zones) ||
-      (name.includes("cable") && !layerVisibility.cables);
-    object.visible = !hiddenByRoom && !hiddenByLayer;
-  });
+function message(text) {
+  clearTimeout(statusTimer);
+  $("#status").textContent = text;
+  $("#status").hidden = false;
+  statusTimer = setTimeout(() => { $("#status").hidden = true; }, 4500);
 }
-
-function groupBox(group) {
-  const itemIds = new Set(group.items || []);
-  return objectBox((object) => {
-    for (const itemId of itemIds) {
-      if (object.name.startsWith(itemId)) return true;
+function element(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text) node.textContent = text;
+  return node;
+}
+function panelOpen(open) {
+  $(".panel").classList.toggle("open", open);
+  $("#panel-toggle").setAttribute("aria-expanded", String(open));
+  $("#panel-toggle-icon").textContent = open ? "−" : "＋";
+}
+function selectedGroup() {
+  return layout?.schedule_groups.find(group => group.code === state.selected);
+}
+function revealSelection() {
+  const scroller = $(matchMedia("(max-width: 760px)").matches ? "#panel-content" : ".panel");
+  const offset = $("#selection").getBoundingClientRect().top - scroller.getBoundingClientRect().top;
+  scroller.scrollTop += offset - 16;
+}
+function syncControls() {
+  for (const [key, value] of [["variant", state.variant], ["room", state.room], ["projection", state.projection]]) {
+    for (const button of all(`[data-${key}]`)) {
+      button.setAttribute("aria-pressed", String(button.dataset[key] === value));
+      button.disabled = busy || !viewer || (key !== "variant" && !layout);
     }
-    return false;
-  });
+  }
+  for (const key of layerNames) {
+    const input = $(`#toggle-${key}`);
+    input.checked = key === "ceilings" && state.projection === "2d" ? false : state.layers[key];
+    input.disabled = busy || !layout || (key === "ceilings" && state.projection === "2d");
+  }
+  $("#ceilings-label").title = state.projection === "2d" ? "Skosy są ukryte w rzucie 2D; ustawienie wróci w widoku 3D." : "Pokaż skosy i okno połaciowe";
+  for (const selector of ["#share", "#export", "#zoom-in", "#zoom-out", "#reset-view", "#selection-focus"]) $(selector).disabled = busy || !layout;
+  $(".stage").setAttribute("aria-busy", String(busy));
+  $("#view-label").textContent = `Wariant ${state.variant.toUpperCase()} · ${state.room === "all" ? "oba pomieszczenia" : `pokój ${state.room}`} · ${state.projection === "2d" ? "rzut 2D" : "3D"}`;
+  $(".interaction-hint").textContent = state.projection === "2d" ? "Przeciągnij, aby przesunąć · scroll przybliża" : "Przeciągnij, aby obrócić · scroll przybliża";
+  $("#equipment-search").disabled = busy || !layout;
 }
-
-function renderEquipmentList() {
-  equipmentListEl.replaceChildren();
+function renderSummary() {
+  $("#variant-summary").textContent = layout.variant?.summary || "";
+  const zone = layout.zones.find(item => item.kind === "primary_vr");
+  $("#vr-area").textContent = zone ? number(zone.w * zone.d, 2) : "—";
+  const inventory = layout.furniture_inventory || [];
+  const total = inventory.reduce((sum, item) => sum + item.quantity, 0);
+  const used = inventory.filter(item => item.status === "placed").reduce((sum, item) => sum + item.quantity, 0);
+  $("#inventory-count").textContent = `${used} / ${total}`;
+  $("#design-notes").replaceChildren(...(layout.design_principles || []).map(text => element("li", "", text)));
+}
+function renderEquipment() {
+  const query = normalize($("#equipment-search").value.trim());
+  let count = 0;
+  const nodes = [];
   for (const group of layout?.schedule_groups || []) {
-    const item = document.createElement("li");
-    const button = document.createElement("button");
+    if (state.room !== "all" && group.room !== state.room) continue;
+    const items = layout.equipment.filter(item => group.items.includes(item.id));
+    const haystack = normalize([group.code, group.room, group.label, group.role, ...items.map(item => item.label)].join(" "));
+    if (query && !query.split(/\s+/).every(word => haystack.includes(word))) continue;
+    count++;
+    const row = element("li");
+    const button = element("button");
     button.type = "button";
-    button.innerHTML = `
-      <span class="code">${group.code}</span>
-      <span>
-        <span class="label">${group.label}</span>
-        <span class="room">Pokój ${group.room}</span>
-      </span>
-    `;
-    button.addEventListener("click", () => {
-      activeView = `room${group.room}`;
-      document.querySelectorAll("[data-view]").forEach((viewButton) => {
-        viewButton.classList.toggle("active", viewButton.dataset.view === activeView);
-      });
-      updateModelVisibility();
-      fitBox(groupBox(group), group.room === "307" ? "room307" : "room308");
-      statusEl.textContent = `${group.code}: ${group.label}`;
-    });
-    item.appendChild(button);
-    equipmentListEl.appendChild(item);
+    button.dataset.group = group.code;
+    button.setAttribute("aria-pressed", String(group.code === state.selected));
+    button.disabled = busy;
+    const label = element("span");
+    label.append(element("span", "label", group.label), element("span", "room", `Pokój ${group.room}`));
+    const arrow = element("span", "equipment-arrow", "↗");
+    arrow.setAttribute("aria-hidden", "true");
+    button.append(element("span", "code", group.code), label, arrow);
+    button.addEventListener("click", () => selectGroup(group.code));
+    row.append(button);
+    nodes.push(row);
   }
+  $("#equipment-list").replaceChildren(...nodes);
+  $("#equipment-count").textContent = String(count);
+  $("#empty-results").hidden = count !== 0 || !layout;
+  $("#list-scope").textContent = `${state.room === "all" ? "Oba pomieszczenia" : `Pokój ${state.room}`} · wybierz element na liście lub w modelu`;
 }
-
-function applyModelMaterials(root) {
-  root.traverse((object) => {
-    if (!object.isMesh) return;
-    object.castShadow = true;
-    object.receiveShadow = true;
-    const materials = Array.isArray(object.material) ? object.material : [object.material];
-    for (const material of materials) {
-      if (!material) continue;
-      material.side = THREE.DoubleSide;
-      material.roughness = Math.max(material.roughness ?? 0.65, 0.62);
-      const lower = material.name.toLowerCase();
-      if (lower.includes("ceiling")) {
-        material.transparent = true;
-        material.opacity = 0.28;
-        material.depthWrite = false;
-      }
-      if (lower.includes("zone")) {
-        material.transparent = true;
-        material.opacity = 0.46;
-        material.depthWrite = false;
-      }
-      if (lower.includes("wall")) {
-        material.transparent = true;
-        material.opacity = 0.55;
-        material.depthWrite = false;
-      }
-      if (lower.includes("window_glass")) {
-        material.transparent = true;
-        material.opacity = 0.62;
-        material.depthWrite = false;
-      }
+function renderSelection() {
+  const group = selectedGroup();
+  $("#selection").hidden = !group;
+  viewer?.highlight(group?.code);
+  if (!group) return;
+  $("#selection-meta").textContent = `Zespół ${group.code} · pokój ${group.room}`;
+  $("#selection-title").textContent = group.label;
+  $("#selection-role").textContent = group.role;
+  const items = layout.equipment.filter(item => group.items.includes(item.id));
+  $("#selection-items").replaceChildren(...items.map(item => {
+    const node = element("li", "", item.label);
+    // Only show source dimensions, never infer dimensions from decorative geometry.
+    if (Number.isFinite(item.w) && Number.isFinite(item.d)) {
+      const dimensions = [item.w, item.d, item.h].filter(Number.isFinite).map(value => number(value * 100));
+      node.append(element("span", "item-dimensions", `Gabaryt w modelu: ${dimensions.join(" × ")} cm`));
     }
-  });
+    if (item.height_note) node.append(element("span", "item-dimensions", item.height_note));
+    return node;
+  }));
+}
+function updateView({ refit = false } = {}) {
+  syncControls();
+  viewer?.show(state, refit);
+  renderEquipment();
+  renderSelection();
+  syncLocation();
+}
+function selectGroup(code) {
+  const group = layout?.schedule_groups.find(item => item.code === code);
+  if (!group || busy) return;
+  const fromList = document.activeElement?.hasAttribute("data-group");
+  state.selected = code;
+  // Keep the whole-plan context when selecting; a room filter stays consistent.
+  if (state.room !== "all" && state.room !== group.room) state.room = group.room;
+  updateView();
+  panelOpen(true);
+  $("#selection details").open = false;
+  if (fromList) $("#selection-title").focus({ preventScroll: true });
+  revealSelection();
+  message(`${group.label} · opis w panelu`);
+}
+function clearSelection() {
+  const code = state.selected;
+  const hadFocus = $("#selection").contains(document.activeElement);
+  state.selected = null;
+  updateView();
+  if (hadFocus) (all("[data-group]").find(button => button.dataset.group === code) || $("#equipment-search")).focus();
+}
+function changeRoom(room) {
+  state.room = room;
+  if (room !== "all" && selectedGroup()?.room !== room) state.selected = null;
+  updateView({ refit: true });
 }
 
-async function loadScene() {
-  await loadVariant("a");
-}
-
-function disposeModel(root) {
-  root?.traverse((object) => {
-    if (!object.isMesh) return;
-    object.geometry?.dispose();
-    const materials = Array.isArray(object.material) ? object.material : [object.material];
-    for (const material of materials) material?.dispose();
-  });
-}
-
-async function loadVariant(variantId) {
-  const config = variants[variantId];
-  if (!config) return;
-  const sequence = ++loadSequence;
-  activeVariant = variantId;
-  document.querySelectorAll("[data-variant]").forEach((button) => {
-    button.classList.toggle("active", button.dataset.variant === variantId);
-    button.disabled = true;
-  });
-  statusEl.textContent = `Ładowanie wariantu ${variantId.toUpperCase()}`;
-
-  try {
-    const [layoutResponse, gltf] = await Promise.all([
-      fetch(config.layout, { cache: "no-store" }),
-      new GLTFLoader().loadAsync(config.model),
+async function fetchVariant(id) {
+  if (cache.has(id)) return cache.get(id);
+  const pending = (async () => {
+    const config = variants[id];
+    const signal = AbortSignal.timeout(30000);
+    const [nextLayout, buffer] = await Promise.all([
+      fetch(config.layout, { signal }).then(response => {
+        if (!response.ok) throw new Error(`Layout: HTTP ${response.status}`);
+        return response.json();
+      }),
+      fetch(config.model, { signal }).then(response => {
+        if (!response.ok) throw new Error(`Model: HTTP ${response.status}`);
+        return response.arrayBuffer();
+      }),
     ]);
-    if (!layoutResponse.ok) throw new Error(`HTTP ${layoutResponse.status}: ${config.layout}`);
-    const nextLayout = await layoutResponse.json();
-    if (sequence !== loadSequence) return;
-
-    if (model) {
-      scene.remove(model);
-      disposeModel(model);
+    for (const key of ["equipment", "schedule_groups", "zones", "cable_paths"]) {
+      if (!Array.isArray(nextLayout[key])) throw new Error(`Brak danych: ${key}`);
     }
-    layout = nextLayout;
-    model = gltf.scene;
-    applyModelMaterials(model);
-    scene.add(model);
-    variantTitleEl.textContent = layout.variant?.name ?? `Wariant ${variantId.toUpperCase()}`;
-    renderEquipmentList();
-    resize();
-    focusView(activeView);
-    statusEl.textContent = `${layout.variant?.label ?? `Wariant ${variantId.toUpperCase()}`}: model gotowy`;
+    const gltf = await new GLTFLoader().parseAsync(buffer, new URL("./assets/", location.href).href);
+    return { layout: nextLayout, model: gltf.scene };
+  })();
+  cache.set(id, pending);
+  try { return await pending; }
+  catch (error) { cache.delete(id); throw error; }
+}
+async function loadVariant(id, restoredState = null) {
+  if (!viewer) return;
+  const currentSequence = ++sequence;
+  retryVariant = id;
+  busy = true;
+  $("#load-error").hidden = true;
+  $("#loading").hidden = false;
+  $("#loading-message").textContent = `Wczytywanie wariantu ${id.toUpperCase()}…`;
+  syncControls();
+  all("[data-group]").forEach(button => { button.disabled = true; });
+  try {
+    const entry = await fetchVariant(id);
+    if (currentSequence !== sequence) return;
+    const nextState = restoredState || { ...state, variant: id, selected: null };
+    const group = entry.layout.schedule_groups.find(item => item.code === nextState.selected);
+    if (!group || (nextState.room !== "all" && group.room !== nextState.room)) nextState.selected = null;
+    // Commit variant, labels and model together only after both files succeeded.
+    viewer.setModel(entry.model, entry.layout);
+    layout = entry.layout;
+    state = nextState;
+    busy = false;
+    $("#equipment-search").value = "";
+    renderSummary();
+    updateView({ refit: true });
+    if (state.selected) { panelOpen(true); revealSelection(); }
   } catch (error) {
-    if (sequence === loadSequence) statusEl.textContent = `Nie udało się załadować wariantu ${variantId.toUpperCase()}`;
-    console.error(error);
+    if (currentSequence !== sequence) return;
+    console.error("Nie udało się wczytać wariantu", id, error);
+    $("#error-message").textContent = `Wariant ${id.toUpperCase()} jest niedostępny. Sprawdź połączenie i spróbuj ponownie.${layout ? ` Nadal wyświetlany jest wariant ${state.variant.toUpperCase()}.` : ""}`;
+    $("#load-error").hidden = false;
+    if (layout) syncLocation();
   } finally {
-    if (sequence === loadSequence) {
-      document.querySelectorAll("[data-variant]").forEach((button) => {
-        button.disabled = false;
-      });
+    if (currentSequence === sequence) {
+      busy = false;
+      $("#loading").hidden = true;
+      syncControls();
+      renderEquipment();
     }
   }
 }
 
-canvas.addEventListener("pointerdown", (event) => {
-  if (!model) return;
-  const rect = canvas.getBoundingClientRect();
-  pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-  pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-  raycaster.setFromCamera(pointer, camera);
-  const hits = raycaster.intersectObject(model, true);
-  const hit = hits.find((entry) => entry.object?.isMesh);
-  if (hit) {
-    statusEl.textContent = cleanName(hit.object.name);
+for (const button of all("[data-variant]")) button.addEventListener("click", () => {
+  if (button.dataset.variant === state.variant && layout) {
+    $("#load-error").hidden = true;
+    return;
   }
+  loadVariant(button.dataset.variant);
 });
-
-document.querySelectorAll("[data-view]").forEach((button) => {
-  button.addEventListener("click", () => focusView(button.dataset.view));
+for (const button of all("[data-room]")) button.addEventListener("click", () => changeRoom(button.dataset.room));
+for (const button of all("[data-projection]")) button.addEventListener("click", () => {
+  state.projection = button.dataset.projection;
+  updateView({ refit: true });
 });
-
-document.querySelectorAll("[data-variant]").forEach((button) => {
-  button.addEventListener("click", () => loadVariant(button.dataset.variant));
+for (const key of layerNames) $(`#toggle-${key}`).addEventListener("change", event => {
+  state.layers[key] = event.target.checked;
+  updateView();
 });
-
-document.querySelector("#toggle-ceilings").addEventListener("change", (event) => {
-  setLayerVisibility("ceilings", event.target.checked);
+$("#equipment-search").addEventListener("input", renderEquipment);
+$("#clear-search").addEventListener("click", () => {
+  $("#equipment-search").value = "";
+  renderEquipment();
+  $("#equipment-search").focus();
 });
-
-document.querySelector("#toggle-zones").addEventListener("change", (event) => {
-  setLayerVisibility("zones", event.target.checked);
+$("#selection-close").addEventListener("click", clearSelection);
+$("#selection-focus").addEventListener("click", () => {
+  if (matchMedia("(max-width: 760px)").matches) { panelOpen(false); $("#scene").focus(); }
+  viewer.focusGroup(state.selected);
 });
-
-document.querySelector("#toggle-cables").addEventListener("change", (event) => {
-  setLayerVisibility("cables", event.target.checked);
+$("#panel-toggle").addEventListener("click", () => panelOpen(!$(".panel").classList.contains("open")));
+$(".skip-link").addEventListener("click", event => {
+  event.preventDefault();
+  $("#scene").focus();
 });
+$("#zoom-in").addEventListener("click", () => viewer.zoom(1.25));
+$("#zoom-out").addEventListener("click", () => viewer.zoom(0.8));
+$("#reset-view").addEventListener("click", () => viewer.fit());
+$("#retry").addEventListener("click", () => viewer ? loadVariant(retryVariant) : location.reload());
+$("#help-open").addEventListener("click", () => $("#help-dialog").showModal());
+$("#help-close").addEventListener("click", () => $("#help-dialog").close());
+$("#share").addEventListener("click", async () => {
+  syncLocation();
+  try { await navigator.clipboard.writeText(location.href); message("Skopiowano link do tego widoku."); }
+  catch { message("Link jest w pasku adresu — skopiuj go stamtąd."); }
+});
+$("#export").addEventListener("click", async () => {
+  const button = $("#export");
+  button.disabled = true;
+  const filename = `kognilab-${state.variant}-${state.room}-${state.projection}.png`;
+  try {
+    const blob = await viewer.exportImage();
+    if (!blob) throw new Error("Pusty obraz");
+    const url = URL.createObjectURL(blob);
+    const link = element("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
+    message("Zapisano bieżący kadr modelu jako PNG.");
+  } catch { message("Nie udało się zapisać obrazu. Spróbuj ponownie."); }
+  finally { syncControls(); }
+});
+window.addEventListener("hashchange", () => loadVariant(readLocation().variant, readLocation()));
 
-window.addEventListener("resize", resize);
-
-function animate() {
-  controls.update();
-  renderer.render(scene, camera);
-  requestAnimationFrame(animate);
+try {
+  viewer = createViewer($("#scene"), {
+    onPick: data => { if (busy) return; if (data.group) selectGroup(data.group); else if (data.label) message(data.label); },
+    onClear: clearSelection,
+    onReset: () => viewer.fit(),
+    onContextLost: () => message("Przerwano wyświetlanie grafiki. Oczekiwanie na przywrócenie…"),
+    onContextRestored: () => message("Przywrócono wyświetlanie modelu."),
+  });
+  loadVariant(state.variant, state);
+} catch (error) {
+  console.error(error);
+  $("#loading").hidden = true;
+  $("#load-error").hidden = false;
+  $("#error-message").textContent = "Przeglądarka nie uruchomiła grafiki 3D. Włącz akcelerację sprzętową lub otwórz plan w innej przeglądarce.";
+  syncControls();
 }
-
-resize();
-loadScene();
-animate();

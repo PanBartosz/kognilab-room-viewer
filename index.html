@@ -3,59 +3,94 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>KogniLab 307/308 - model 3D</title>
+    <meta name="theme-color" content="#f5f6f2" />
+    <title>KogniLab · Plan przestrzeni 307/308</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./styles.css" />
     <script type="importmap">
-      {
-        "imports": {
-          "three": "./vendor/three.module.js",
-          "three/addons/": "./vendor/"
-        }
-      }
+      {"imports":{"three":"./vendor/three.module.js","three/addons/":"./vendor/"}}
     </script>
   </head>
   <body>
+    <a class="skip-link" href="#scene">Przejdź do modelu</a>
     <div class="shell">
-      <aside class="panel" aria-label="Panel modelu">
-        <header>
-          <p>KogniLab</p>
-          <h1>Pomieszczenia 307/308</h1>
-        </header>
-
-        <section class="variant-control" aria-labelledby="variant-heading">
-          <h2 id="variant-heading">Wariant układu</h2>
-          <div class="segmented variant-segmented" aria-label="Wariant aranżacji">
-            <button class="active" type="button" data-variant="a" title="Układ rozproszony">A</button>
-            <button type="button" data-variant="b" title="Zabudowa U i magazyn">B</button>
-          </div>
-          <p id="variant-title" class="variant-title">Układ rozproszony</p>
-        </section>
-
-        <nav class="segmented" aria-label="Widoki kamery">
-          <button class="active" type="button" data-view="overview">Całość</button>
-          <button type="button" data-view="room307">307</button>
-          <button type="button" data-view="room308">308</button>
-          <button type="button" data-view="top">Rzut</button>
-        </nav>
-
-        <section class="toggles" aria-label="Warstwy">
-          <label><input type="checkbox" id="toggle-ceilings" checked /> Skosy</label>
-          <label><input type="checkbox" id="toggle-zones" checked /> Strefy</label>
-          <label><input type="checkbox" id="toggle-cables" checked /> Trasy</label>
-        </section>
-
-        <section>
-          <h2>Zespoły wyposażenia</h2>
-          <ol id="equipment-list" class="equipment-list"></ol>
-        </section>
+      <header class="app-header">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">K.</span><div><p class="eyebrow">KogniLab</p><h1>Plan przestrzeni <span>307 / 308</span></h1></div></div>
+        <div class="header-actions">
+          <button id="share" type="button" disabled title="Skopiuj link do wariantu, widoku i zaznaczenia">Kopiuj link</button>
+          <button id="export" type="button" disabled title="Zapisz bieżący widok modelu jako obraz PNG">Zapisz PNG</button>
+          <button id="help-open" class="icon-button" type="button" aria-label="Pomoc i sterowanie">?</button>
+        </div>
+      </header>
+      <aside class="panel" aria-label="Plan i wyposażenie">
+        <button id="panel-toggle" class="panel-toggle" type="button" aria-expanded="false" aria-controls="panel-content"><span>Wariant i wyposażenie</span><span id="panel-toggle-icon" aria-hidden="true">＋</span></button>
+        <div id="panel-content" class="panel-content">
+          <section aria-labelledby="variant-heading">
+            <p class="eyebrow">01 / Aranżacja</p>
+            <h2 id="variant-heading">Wybierz wariant</h2>
+            <div class="variant-options" role="group" aria-label="Wariant aranżacji">
+              <button type="button" data-variant="a" aria-pressed="true"><span class="variant-letter">A</span><span><strong>Układ rozproszony</strong><small>Praca, spotkania i VR</small></span></button>
+              <button type="button" data-variant="b" aria-pressed="false"><span class="variant-letter">B</span><span><strong>Zabudowa U</strong><small>Trzy stanowiska i magazyn</small></span></button>
+            </div>
+            <p id="variant-summary" class="muted variant-summary">Wczytywanie opisu aranżacji…</p>
+            <div class="metrics"><div><strong id="vr-area">—</strong><span>strefa VR · m²</span></div><div><strong id="inventory-count">—</strong><span>użyte meble / dostępne</span></div></div>
+          </section>
+          <section class="equipment-section" aria-labelledby="equipment-heading">
+            <div class="section-heading"><div><p class="eyebrow">02 / Wyposażenie</p><h2 id="equipment-heading">Poznaj układ</h2></div><span id="equipment-count" class="count">0</span></div>
+            <label class="sr-only" for="equipment-search">Szukaj wyposażenia</label>
+            <input id="equipment-search" type="search" placeholder="Szukaj, np. PLUX, biurko…" autocomplete="off" />
+            <p id="list-scope" class="list-scope muted">Oba pomieszczenia · wybierz element na liście lub w modelu</p>
+            <section id="selection" class="selection" aria-labelledby="selection-title" hidden>
+              <div class="selection-heading"><p id="selection-meta" class="eyebrow"></p><button id="selection-close" class="icon-button" type="button" aria-label="Wyczyść zaznaczenie">×</button></div>
+              <h3 id="selection-title" tabindex="-1"></h3>
+              <p id="selection-role"></p>
+              <button id="selection-focus" type="button" class="text-button">Przybliż w modelu ↗</button>
+              <details><summary>Elementy i wymiary</summary><ul id="selection-items"></ul></details>
+            </section>
+            <ol id="equipment-list" class="equipment-list"></ol>
+            <div id="empty-results" class="empty-results" hidden><p>Brak pasujących elementów.</p><button id="clear-search" type="button">Wyczyść wyszukiwanie</button></div>
+          </section>
+          <details class="project-notes"><summary>Założenia i pomiary</summary><p>Model planistyczny na podstawie rzutu pomieszczeń i pomiarów mebli z 22.07.2026.</p><p>Do potwierdzenia na miejscu: gabaryt grzejnika, wysokość korpusu szafy serwerowej i przepust między pokojami. Nad regałem pozostaje 12 cm zapasu.</p><ul id="design-notes"></ul></details>
+          <p class="panel-footer">KogniLab · pomieszczenia 307 i 308</p>
+        </div>
       </aside>
-
-      <main class="stage">
-        <canvas id="scene"></canvas>
-        <div id="status" class="status">Ładowanie modelu</div>
+      <main class="stage" aria-label="Interaktywny model pomieszczeń" aria-busy="true">
+        <div class="stage-toolbar">
+          <nav class="segmented" aria-label="Pomieszczenie">
+            <button type="button" data-room="all" aria-pressed="true">Całość</button>
+            <button type="button" data-room="307" aria-pressed="false">307</button>
+            <button type="button" data-room="308" aria-pressed="false">308</button>
+          </nav>
+          <div class="segmented" role="group" aria-label="Rodzaj widoku">
+            <button type="button" data-projection="3d" aria-pressed="true">3D</button>
+            <button type="button" data-projection="2d" aria-pressed="false">Rzut 2D</button>
+          </div>
+        </div>
+        <canvas id="scene" tabindex="0" aria-label="Model pomieszczeń. Strzałki przesuwają widok, plus i minus przybliżają, zero przywraca kadr. Wyposażenie można wybrać również z listy."></canvas>
+        <div class="layer-controls" role="group" aria-label="Warstwy modelu">
+          <label><input type="checkbox" id="toggle-walls" checked />Ściany</label>
+          <label id="ceilings-label"><input type="checkbox" id="toggle-ceilings" />Skosy</label>
+          <label><input type="checkbox" id="toggle-zones" checked />Strefy</label>
+          <label><input type="checkbox" id="toggle-cables" checked />Trasy</label>
+        </div>
+        <div class="camera-tools" role="group" aria-label="Sterowanie kamerą">
+          <button id="zoom-in" class="icon-button" type="button" aria-label="Przybliż model">+</button>
+          <button id="zoom-out" class="icon-button" type="button" aria-label="Oddal model">−</button>
+          <button id="reset-view" type="button" title="Przywróć kadr wybranego pomieszczenia (0)">Cały kadr</button>
+        </div>
+        <div class="stage-footer"><span id="view-label">Wariant A · oba pomieszczenia</span><span class="interaction-hint">Przeciągnij, aby obrócić · scroll przybliża</span></div>
+        <div id="loading" class="loading" role="status"><span class="spinner" aria-hidden="true"></span><p id="loading-message">Wczytywanie modelu…</p></div>
+        <div id="load-error" class="load-error" role="alert" hidden><strong>Nie udało się wczytać modelu</strong><p id="error-message"></p><button id="retry" type="button">Spróbuj ponownie</button></div>
+        <div id="status" class="status" role="status" aria-live="polite" hidden></div>
       </main>
     </div>
+    <dialog id="help-dialog" aria-labelledby="help-title">
+      <div class="dialog-heading"><h2 id="help-title">Jak obejrzeć plan</h2><button id="help-close" class="icon-button" type="button" aria-label="Zamknij pomoc">×</button></div>
+      <p>Wybierz wariant A lub B, a następnie pomieszczenie. Rzut 2D pokazuje układ z góry, bez perspektywy i skosów.</p>
+      <dl><dt>Obrót w 3D</dt><dd>Przeciągnij myszą lub jednym palcem.</dd><dt>Przesuwanie</dt><dd>Prawy przycisk myszy, dwa palce lub strzałki po wybraniu modelu. W rzucie 2D przeciągnij jednym palcem.</dd><dt>Przybliżanie</dt><dd>Scroll, gest szczypania lub przyciski + / −.</dd><dt>Wyposażenie</dt><dd>Kliknij element modelu albo pozycję na liście. Opis i wymiary pojawią się w panelu.</dd><dt>Powrót do kadru</dt><dd>Przycisk „Cały kadr” lub klawisz 0 w modelu. Escape usuwa zaznaczenie.</dd></dl>
+      <p class="muted">„Kopiuj link” zachowuje wariant, pomieszczenie, rodzaj widoku, warstwy i zaznaczenie. „Zapisz PNG” pobiera aktualny kadr modelu.</p>
+    </dialog>
+    <noscript><p class="noscript">Do wyświetlenia interaktywnego modelu potrzebna jest włączona obsługa JavaScript.</p></noscript>
     <script type="module" src="./app.js"></script>
   </body>
 </html>
