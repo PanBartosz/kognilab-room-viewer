@@ -11,7 +11,7 @@
   "design_date": "2026-07-22",
   "design_principles": [
     "Pomieszczenie 308 łączy główną salę eksperymentalną VR z dwoma stanowiskami siedzącymi umieszczonymi poza strefą ruchu.",
-    "Stanowisko eyetrackingowe stoi przy ścianie wspólnej z 307 i nie ma lokalnej stacji roboczej; aktywne lub światłowodowe USB 3.x prowadzi do komputera w 307.",
+    "Stanowisko eyetrackingowe stoi przy ścianie wspólnej z 307; PC w 307 jest rozwiązaniem warunkowym, wymagającym sprawdzenia obrazu i USB 3.0 z konkretnym Gazepointem przed wykonaniem instalacji.",
     "Stanowisko PC-VR stoi przy przeciwległej ścianie, co skraca trasę do strefy uczestnika i pozostawia południową część pokoju wolną.",
     "Stanowisko eyetrackingowe wykorzystuje stół 155 x 75 cm, a stanowisko PC-VR biurko 132 x 67 x 76 cm; oba stoją w wyższej części pasa pod skosem.",
     "Aparatura fizjologiczna pozostaje na mobilnym wózku parkowanym po wschodniej stronie grzejnika i jest dosuwana do uczestnika tylko na czas pomiaru.",
@@ -565,7 +565,7 @@
       "room": "308",
       "label": "Strefa uczestnika VR",
       "items": ["participant_308"],
-      "role": "Bezpieczna strefa ruchu, VIVE Focus Vision, TactSuit, kontrolery oraz trackery montowane na uczestniku lub śledzonych obiektach."
+      "role": "Projektowany obrys 3,17 x 3,20 m, nie potwierdzona bezpieczna strefa ruchu. Wysokość około 2,16 m i odległości od przeszkód wymagają oceny dla konkretnego uczestnika i scenariusza VR. Zalecenia HTC dla Ultimate Tracker: pole co najmniej 3 x 3 m i dystans 1,5 m od przeszkód."
     },
     {
       "code": "C",
@@ -579,7 +579,7 @@
       "room": "308",
       "label": "Sieć bezprzewodowa VR",
       "items": ["router_ap_308"],
-      "role": "Router/AP Wi-Fi 7 umieszczony wysoko, z linią widzenia na strefę VR."
+      "role": "Kupiony UniFi U7 Pro; montaż poza zasięgiem uczestnika, z dobrym pokryciem strefy badania. Istniejący switch zapewnia PoE; standard PoE+ i budżet mocy do weryfikacji przez IT."
     },
     {
       "code": "R",
@@ -593,7 +593,7 @@
       "room": "308",
       "label": "Stanowisko badań eyetrackingowych",
       "items": ["desk_308_eyetracking", "monitor_308_eyetracking", "eye_tracker_308", "keyboard_308_eyetracking", "chair_308_eyetracking"],
-      "role": "Stół 155 x 75 cm z monitorem, klawiaturą, myszą i eyetrackerem, bez lokalnego komputera; stacja obliczeniowa znajduje się w 307."
+      "role": "Stół 155 x 75 cm i posiadany Gazepoint, prawdopodobnie GP3 HD 150 Hz. Producent GP3 HD podaje ekrany do 24 cali i USB 3.0. Model urządzenia, monitor oraz cały tor obrazu i USB do PC w 307 wymagają sprawdzenia przed wykonaniem stanowiska."
     },
     {
       "code": "F",

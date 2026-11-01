@@ -573,14 +573,14 @@
       "room": "308",
       "label": "Trzystanowiskowa zabudowa U",
       "items": ["u_desk_308", "monitor_308_eyetracking_b", "eye_tracker_308_b", "keyboard_308_eyetracking_b", "chair_308_eyetracking_b", "monitor_308_aux_b", "keyboard_308_aux_b", "chair_308_aux_b", "pc_308_aux_existing_b", "monitor_308_vr_b", "keyboard_308_vr_b", "chair_308_vr_b", "pc_308_rtx5090_b", "ups_308_b"],
-      "role": "Zabudowa na wymiar 3,75 x 1,40 m: stanowisko badanego z eyetrackerem, stanowisko pomocnicze oraz stanowisko operatorskie PC-VR."
+      "role": "Koncepcja zabudowy 3,75 x 1,40 m: Gazepoint, stanowisko pomocnicze i operator PC-VR. Posiadany eyetracker to prawdopodobnie GP3 HD 150 Hz; producent podaje ekrany do 24 cali i USB 3.0. Głębokość blatu, monitor, ergonomię pod skosem i połączenie z PC sprawdzić przed zamówieniem zabudowy."
     },
     {
       "code": "B",
       "room": "308",
       "label": "Strefa uczestnika VR",
       "items": ["participant_308_b"],
-      "role": "Strefa 3,17 x 3,20 m dla VIVE Focus Vision, TactSuit, kontrolerów i trackerów; stałe meble pozostają poza obrysem."
+      "role": "Projektowany obrys 3,17 x 3,20 m, nie potwierdzona bezpieczna strefa ruchu. Wysokość około 2,16 m i odległości od przeszkód wymagają oceny dla konkretnego uczestnika i scenariusza VR. Zalecenia HTC dla Ultimate Tracker: pole co najmniej 3 x 3 m i dystans 1,5 m od przeszkód."
     },
     {
       "code": "C",
@@ -601,7 +601,7 @@
       "room": "308",
       "label": "Sieć bezprzewodowa VR",
       "items": ["router_ap_308_b"],
-      "role": "Router/AP Wi-Fi 7 umieszczony wysoko, z linią widzenia na strefę VR."
+      "role": "Kupiony UniFi U7 Pro; montaż poza zasięgiem uczestnika, z dobrym pokryciem strefy badania. Istniejący switch zapewnia PoE; standard PoE+ i budżet mocy do weryfikacji przez IT."
     },
     {
       "code": "R",
