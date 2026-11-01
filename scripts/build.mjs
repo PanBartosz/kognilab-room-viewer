@@ -9,6 +9,7 @@ const dist = join(root, "dist");
 const appFiles = [
   "app.js",
   "scene.js",
+  "installations.js",
   "favicon.ico",
   "favicon.svg",
   "index.html",
@@ -49,6 +50,8 @@ await writeFile(join(dist, "index.html"), index
   .replace('src="./app.js"', `src="./app.js?v=${version}"`));
 const app = await readFile(join(dist, "app.js"), "utf8");
 await writeFile(join(dist, "app.js"), app.replace('"./scene.js"', `"./scene.js?v=${version}"`));
+const scene = await readFile(join(dist, "scene.js"), "utf8");
+await writeFile(join(dist, "scene.js"), scene.replace('"./installations.js"', `"./installations.js?v=${version}"`));
 
 await cp(join(root, "assets"), join(dist, "assets"), { recursive: true });
 

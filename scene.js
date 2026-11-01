@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { createInstallations } from "./installations.js";
 
 // Rendering is requested only by a scene change or an unfinished camera gesture.
 export function createViewer(canvas, { onPick, onClear, onReset, onContextLost, onContextRestored }) {
@@ -7,6 +8,7 @@ export function createViewer(canvas, { onPick, onClear, onReset, onContextLost, 
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   const scene = new THREE.Scene();
+  const installations = createInstallations(scene);
   scene.background = new THREE.Color(0xf5f6f2);
   scene.add(new THREE.HemisphereLight(0xffffff, 0xc9c9b5, 1.8));
   const key = new THREE.DirectionalLight(0xffffff, 2.0);
@@ -45,6 +47,7 @@ export function createViewer(canvas, { onPick, onClear, onReset, onContextLost, 
   function render() {
     frame = 0;
     controls.update(); // 'change' schedules the next frame while damping settles.
+    installations.updateLabels(camera, width, height);
     renderer.render(scene, camera);
   }
   function makeControls() {
@@ -130,10 +133,11 @@ export function createViewer(canvas, { onPick, onClear, onReset, onContextLost, 
     requestRender();
   }
 
-  function setModel(root, layout) {
+  function setModel(root, layout, installationPlan) {
     if (model) scene.remove(model);
     model = root;
     scene.add(model);
+    installations.setPlan(installationPlan);
     model.updateMatrixWorld(true);
     meshes = [];
     const records = [...layout.equipment, ...layout.zones, ...layout.cable_paths].sort((a, b) => b.id.length - a.id.length);
@@ -171,6 +175,8 @@ export function createViewer(canvas, { onPick, onClear, onReset, onContextLost, 
           material.opacity = opacity;
           material.depthWrite = false;
         }
+        material.userData.originalOpacity = opacity;
+        material.userData.originalDepthWrite = material.depthWrite;
       }
     });
     // Cable names may mention both rooms. Assign each rendered segment by its
@@ -207,19 +213,29 @@ export function createViewer(canvas, { onPick, onClear, onReset, onContextLost, 
       const { kind, room } = mesh.userData;
       const roomVisible = state.room === "all" || !room || room === state.room;
       const layerVisible = kind === "ceilings" ? state.layers.ceilings && state.projection !== "2d" : state.layers[kind] !== false;
-      mesh.visible = roomVisible && layerVisible;
+      mesh.visible = roomVisible && layerVisible && kind !== "cables";
+      // The old AP block was a placeholder; the proposal places AP1 on the wall.
+      if (state.mode === "installations" && mesh.name.startsWith("router_ap_")) mesh.visible = false;
+      for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+        const original = material.userData.originalOpacity ?? material.opacity;
+        material.opacity = state.mode === "installations" && kind === "equipment" ? Math.min(original, 0.28) : original;
+        material.transparent = material.opacity < 1;
+        material.depthWrite = state.mode === "installations" && kind === "equipment" ? false : material.userData.originalDepthWrite ?? true;
+      }
     }
+    installations.show(state);
     if (refit || changedProjection) fit();
     requestRender();
   }
   function highlight(code) {
+    installations.highlight(code);
     const box = code && boxFor(mesh => mesh.visible && mesh.userData.group === code);
     selection.visible = Boolean(box);
     if (box) selection.box.copy(box).expandByScalar(0.025);
     requestRender();
   }
   function focusGroup(code) {
-    fit(boxFor(mesh => mesh.visible && mesh.userData.group === code));
+    fit(code?.startsWith("@") ? installations.bounds(code) : boxFor(mesh => mesh.visible && mesh.userData.group === code));
   }
   function zoom(factor) {
     manuallyMoved = true;
@@ -255,9 +271,13 @@ export function createViewer(canvas, { onPick, onClear, onReset, onContextLost, 
     const pointer = new THREE.Vector2((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1);
     raycaster.setFromCamera(pointer, camera);
     // Invisible meshes still participate in Three.js raycasting unless filtered out.
+    const installHits = raycaster.intersectObjects(installations.pickables(), false);
+    const installation = installHits.find(hit => hit.object.userData.installation);
+    if (installation) { onPick(installation.object.userData); return; }
     const hits = raycaster.intersectObjects(meshes.filter(mesh => mesh.visible), false);
     const hit = hits.find(entry => entry.object.userData.group) || hits.find(entry => entry.object.userData.label);
-    if (hit) onPick(hit.object.userData);
+    if (hit && state.mode !== "installations") onPick(hit.object.userData);
+    else if (installHits.length) onPick(installHits[0].object.userData);
   });
   canvas.addEventListener("keydown", event => {
     if (["+", "=", "-", "0", "Escape"].includes(event.key)) {
@@ -283,6 +303,7 @@ export function createViewer(canvas, { onPick, onClear, onReset, onContextLost, 
   return {
     setModel, show, highlight, focusGroup, zoom, fit,
     exportImage() {
+      installations.updateLabels(camera, width, height);
       renderer.render(scene, camera);
       return new Promise(resolve => canvas.toBlob(resolve, "image/png"));
     },

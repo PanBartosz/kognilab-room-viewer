@@ -2,6 +2,30 @@
 
 Interaktywny viewer 3D dwóch wariantów aranżacji pomieszczeń KogniLabu 307 i 308. Aplikacja jest statyczna: po zbudowaniu nie wymaga backendu ani połączeń z zewnętrznymi CDN.
 
+## Plan instalacji dla wykonawcy (02.11.2026)
+
+Domyślny tryb „Instalacje” pokazuje nową propozycję 230 V, LAN/PoE, USB/DisplayPort i oświetlenia. Przycisk „Wyposażenie” przywraca przegląd mebli. Każdy punkt ma kod, wysokość, liczbę przyłączy i opis; wybór wyróżnia jego trasy od właściwego źródła. „Od switcha R0” pokazuje LAN z istniejącej szafki w 307. E0 oznacza proponowane wejście zasilania budynku, którego rzeczywiste doprowadzenie ustala elektryk.
+
+Wspólna propozycja dla A/B: 34 pojedyncze gniazda 230 V, 13 łączy LAN, 6 proponowanych pozycji opraw. Górna trasa ma oś około 212 cm; przed skosami są zejścia do 100 cm, a przy tylnej ścianie do 85 cm. X2 jest krótkim przepustem aparatury na 100 cm. Są to założenia do uzgodnienia z wykonawcą.
+
+- `assets/installation_plan.json`: graf tras, punkty i połączenia, wspólne z PDF. Edycję współrzędnych należy robić w `../scripts/create_installation_plan.py`, który zapisuje także źródłowy JSON w `../source/`.
+- `installations.js`: nakładka Three.js, etykiety, filtrowanie i wyróżnienie połączeń. Na małym ekranie pokazuje najważniejsze etykiety; wszystkie punkty pozostają dostępne z listy.
+- `assets/KogniLab_plan_instalacji.pdf`: 4 strony - zakres prac, rzuty A/B z tabelami, 3D i przekrój wysokości. Link „Plan PDF” pobiera tę samą wersję.
+- Stare, niepełne przewody osadzone w GLB są ukryte. Nowe trasy są nakładką z JSON; nie przebudowywano plików FreeCAD/STEP/GLB.
+- Udostępniony adres zachowuje również tryb instalacji i filtry systemów; PNG zawiera widoczne etykiety i trasy. Każda strona rewaliduje pliki danych, a warianty pozostają buforowane w trakcie sesji.
+
+Regeneracja z katalogu projektu nadrzędnego:
+
+```bash
+python3 lab_room_model/scripts/create_installation_plan.py
+python3 lab_room_model/scripts/validate_installations.py
+uv run --with reportlab --with pillow --with pypdf python lab_room_model/scripts/render_installation_plan.py
+```
+
+PDF korzysta z eksportów PNG z przeglądarki w `../output/installations/view_3d_a.png` i `view_3d_b.png`. Po zmianie geometrii tras trzeba wyeksportować oba obrazy ponownie, następnie wygenerować PDF i wykonać build. Walidator sprawdza ciągłość, 13 połączeń LAN od R0, oddzielne źródło 230 V, położenie R0 w szafce A/B i wysokość kanałów pod skosami. Nie zastępuje projektu obwodów ani pomiaru na miejscu.
+
+Weryfikacja nowego trybu: 31 sprawdzeń interakcji w Chromium (w tym wybór punktu na modelu, filtry, oba warianty, link, eksport i mobilny układ) oraz walidacja 1113 próbek wysokości tras. Skrypty i wyniki znajdują się w nadrzędnym `output/playwright/installations-*`.
+
 ## Stan i obsługa aplikacji
 
 Viewer służy do przeglądania dwóch zaprojektowanych aranżacji. Wariant A łączy pracę, spotkania i VR, a wariant B zabudowę U z magazynem. Nie jest edytorem ustawienia mebli.

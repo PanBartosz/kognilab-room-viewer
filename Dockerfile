@@ -5,7 +5,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts
 
-COPY app.js scene.js favicon.ico favicon.svg index.html styles.css ./
+COPY app.js scene.js installations.js favicon.ico favicon.svg index.html styles.css ./
 COPY assets ./assets
 COPY scripts ./scripts
 

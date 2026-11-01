@@ -12,6 +12,8 @@ const number = (value, digits = 1) => value.toLocaleString("pl-PL", { maximumFra
 const normalize = text => text.toLocaleLowerCase("pl").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l");
 let state = readLocation();
 let layout;
+let installationPlan;
+let installationPromise;
 let viewer;
 let busy = false;
 let sequence = 0;
@@ -23,6 +25,8 @@ function readLocation() {
   const params = new URLSearchParams(location.hash.slice(1));
   const visible = params.has("layers") ? params.get("layers").split(",") : ["walls", "zones", "cables"];
   return {
+    mode: params.get("mode") === "equipment" || (params.has("item") && !params.get("item").startsWith("@") && !params.has("mode")) ? "equipment" : "installations",
+    systems: Object.fromEntries(["power", "lan", "av", "light"].map(key => [key, (params.has("systems") ? params.get("systems") : "power,lan,av").split(",").includes(key)])),
     variant: params.get("variant") === "b" ? "b" : "a",
     room: ["307", "308"].includes(params.get("room")) ? params.get("room") : "all",
     projection: params.get("view") === "2d" ? "2d" : "3d",
@@ -31,7 +35,7 @@ function readLocation() {
   };
 }
 function syncLocation() {
-  const params = new URLSearchParams({ variant: state.variant, room: state.room, view: state.projection, layers: layerNames.filter(key => state.layers[key]).join(",") });
+  const params = new URLSearchParams({ variant: state.variant, room: state.room, view: state.projection, mode: state.mode, systems: Object.keys(state.systems).filter(k=>state.systems[k]).join(","), layers: layerNames.filter(key => state.layers[key]).join(",") });
   if (state.selected) params.set("item", state.selected);
   const url = new URL(location.href);
   url.hash = params.toString();
@@ -54,8 +58,13 @@ function panelOpen(open) {
   $("#panel-toggle").setAttribute("aria-expanded", String(open));
   $("#panel-toggle-icon").textContent = open ? "−" : "＋";
 }
+function installationGroups() {
+  return (installationPlan?.points || []).map(p => ({code:`@${p.id}`,room:p.room,label:`${p.id} · ${p.label}`,
+    role: `${p.sockets ? `${p.sockets} × 230 V. ` : ""}${p.lan ? `${p.lan} × RJ45${p.id === "AP1" ? " / PoE+" : ""}. ` : ""}Wysokość osi: ${number(p.position[2]*100,0)} cm. ${p.note}`,items:[],point:p}));
+}
+function groups() { return state.mode === "installations" ? installationGroups() : layout?.schedule_groups || []; }
 function selectedGroup() {
-  return layout?.schedule_groups.find(group => group.code === state.selected);
+  return groups().find(group => group.code === state.selected);
 }
 function revealSelection() {
   const scroller = $(matchMedia("(max-width: 760px)").matches ? "#panel-content" : ".panel");
@@ -63,7 +72,7 @@ function revealSelection() {
   scroller.scrollTop += offset - 16;
 }
 function syncControls() {
-  for (const [key, value] of [["variant", state.variant], ["room", state.room], ["projection", state.projection]]) {
+  for (const [key, value] of [["variant", state.variant], ["room", state.room], ["projection", state.projection], ["mode", state.mode]]) {
     for (const button of all(`[data-${key}]`)) {
       button.setAttribute("aria-pressed", String(button.dataset[key] === value));
       button.disabled = busy || !viewer || (key !== "variant" && !layout);
@@ -75,11 +84,18 @@ function syncControls() {
     input.disabled = busy || !layout || (key === "ceilings" && state.projection === "2d");
   }
   $("#ceilings-label").title = state.projection === "2d" ? "Skosy są ukryte w rzucie 2D; ustawienie wróci w widoku 3D." : "Pokaż skosy i okno połaciowe";
-  for (const selector of ["#share", "#export", "#zoom-in", "#zoom-out", "#reset-view", "#selection-focus"]) $(selector).disabled = busy || !layout;
+  for (const selector of ["#share", "#export", "#zoom-in", "#zoom-out", "#reset-view", "#selection-focus", "#from-switch", "#all-installations"]) $(selector).disabled = busy || !layout;
   $(".stage").setAttribute("aria-busy", String(busy));
   $("#view-label").textContent = `Wariant ${state.variant.toUpperCase()} · ${state.room === "all" ? "oba pomieszczenia" : `pokój ${state.room}`} · ${state.projection === "2d" ? "rzut 2D" : "3D"}`;
   $(".interaction-hint").textContent = state.projection === "2d" ? "Przeciągnij, aby przesunąć · scroll przybliża" : "Przeciągnij, aby obrócić · scroll przybliża";
   $("#equipment-search").disabled = busy || !layout;
+  for (const input of all("[data-system]")) { input.checked = state.systems[input.dataset.system]; input.disabled = busy || !layout; }
+  const installing = state.mode === "installations";
+  $("#installation-tools").hidden = !installing;
+  $("#equipment-heading").textContent = installing ? "Punkty przyłączeniowe" : "Poznaj układ";
+  $("#equipment-search").placeholder = installing ? "Szukaj: S5, switch, 230 V…" : "Szukaj, np. PLUX, biurko…";
+  $("#panel-toggle-label").textContent = installing ? "Instalacje i punkty" : "Wariant i wyposażenie";
+  $("#installation-key").hidden = !state.layers.cables;
 }
 function renderSummary() {
   $("#variant-summary").textContent = layout.variant?.summary || "";
@@ -95,8 +111,9 @@ function renderEquipment() {
   const query = normalize($("#equipment-search").value.trim());
   let count = 0;
   const nodes = [];
-  for (const group of layout?.schedule_groups || []) {
-    if (state.room !== "all" && group.room !== state.room) continue;
+  for (const group of groups()) {
+    if (state.room !== "all" && group.room && group.room !== state.room) continue;
+    if (group.point && !group.point.systems.some(s=>state.systems[s])) continue;
     const items = layout.equipment.filter(item => group.items.includes(item.id));
     const haystack = normalize([group.code, group.room, group.label, group.role, ...items.map(item => item.label)].join(" "));
     if (query && !query.split(/\s+/).every(word => haystack.includes(word))) continue;
@@ -108,10 +125,10 @@ function renderEquipment() {
     button.setAttribute("aria-pressed", String(group.code === state.selected));
     button.disabled = busy;
     const label = element("span");
-    label.append(element("span", "label", group.label), element("span", "room", `Pokój ${group.room}`));
+    label.append(element("span", "label", group.label), element("span", "room", `${group.room ? `Pokój ${group.room}` : "Między pokojami"}${group.point ? ` · ${number(group.point.position[2]*100,0)} cm` : ""}`));
     const arrow = element("span", "equipment-arrow", "↗");
     arrow.setAttribute("aria-hidden", "true");
-    button.append(element("span", "code", group.code), label, arrow);
+    button.append(element("span", "code", group.code.replace(/^@/, "")), label, arrow);
     button.addEventListener("click", () => selectGroup(group.code));
     row.append(button);
     nodes.push(row);
@@ -126,9 +143,17 @@ function renderSelection() {
   $("#selection").hidden = !group;
   viewer?.highlight(group?.code);
   if (!group) return;
-  $("#selection-meta").textContent = `Zespół ${group.code} · pokój ${group.room}`;
+  $("#selection-meta").textContent = `${group.point ? "Punkt" : "Zespół"} ${group.code.replace(/^@/, "")} · ${group.room ? `pokój ${group.room}` : "między pokojami"}`;
   $("#selection-title").textContent = group.label;
   $("#selection-role").textContent = group.role;
+  $("#selection-details-label").textContent = group.point ? "Położenie i połączenia" : "Elementy i wymiary";
+  if (group.point) {
+    const p = group.point;
+    const texts = [`Współrzędne modelu: X=${number(p.position[0],2)} m, Y=${number(p.position[1],2)} m, wysokość=${number(p.position[2],2)} m. Wszystkie położenia są proponowane.`];
+    for (const c of installationPlan.connections.filter(c=>c.source===p.id || c.target===p.id)) texts.push(`${installationPlan.systems[c.system].label}: ${c.source} → ${c.target}${c.system==='lan' ? ` · ${c.quantity} osobne łącza` : ""}`);
+    $("#selection-items").replaceChildren(...texts.map(text=>element("li","",text)));
+    return;
+  }
   const items = layout.equipment.filter(item => group.items.includes(item.id));
   $("#selection-items").replaceChildren(...items.map(item => {
     const node = element("li", "", item.label);
@@ -149,18 +174,18 @@ function updateView({ refit = false } = {}) {
   syncLocation();
 }
 function selectGroup(code) {
-  const group = layout?.schedule_groups.find(item => item.code === code);
+  if (code.startsWith("@")) state.mode = "installations";
+  const group = groups().find(item => item.code === code);
   if (!group || busy) return;
   const fromList = document.activeElement?.hasAttribute("data-group");
   state.selected = code;
   // Keep the whole-plan context when selecting; a room filter stays consistent.
-  if (state.room !== "all" && state.room !== group.room) state.room = group.room;
+  if (group.room && state.room !== "all" && state.room !== group.room) state.room = group.room;
   updateView();
   panelOpen(true);
   $("#selection details").open = false;
   if (fromList) $("#selection-title").focus({ preventScroll: true });
   revealSelection();
-  message(`${group.label} · opis w panelu`);
 }
 function clearSelection() {
   const code = state.selected;
@@ -180,7 +205,8 @@ async function fetchVariant(id) {
   const pending = (async () => {
     const config = variants[id];
     const signal = AbortSignal.timeout(30000);
-    const [nextLayout, buffer] = await Promise.all([
+    if (!installationPromise) installationPromise = fetch("./assets/installation_plan.json", {signal, cache:"no-cache"}).then(r=>{if(!r.ok)throw new Error(`Instalacje: HTTP ${r.status}`);return r.json();}).then(plan=>{if(!Array.isArray(plan.edges)||!Array.isArray(plan.points)||!Array.isArray(plan.connections))throw new Error("Niepoprawny plan instalacji");return plan;}).catch(error=>{installationPromise=null;throw error;});
+    const [nextLayout, buffer, plan] = await Promise.all([
       fetch(config.layout, { signal, cache: "no-cache" }).then(response => {
         if (!response.ok) throw new Error(`Layout: HTTP ${response.status}`);
         return response.json();
@@ -189,12 +215,13 @@ async function fetchVariant(id) {
         if (!response.ok) throw new Error(`Model: HTTP ${response.status}`);
         return response.arrayBuffer();
       }),
+      installationPromise,
     ]);
     for (const key of ["equipment", "schedule_groups", "zones", "cable_paths"]) {
       if (!Array.isArray(nextLayout[key])) throw new Error(`Brak danych: ${key}`);
     }
     const gltf = await new GLTFLoader().parseAsync(buffer, new URL("./assets/", location.href).href);
-    return { layout: nextLayout, model: gltf.scene };
+    return { layout: nextLayout, model: gltf.scene, plan };
   })();
   cache.set(id, pending);
   try { return await pending; }
@@ -214,11 +241,12 @@ async function loadVariant(id, restoredState = null) {
     const entry = await fetchVariant(id);
     if (currentSequence !== sequence) return;
     const nextState = restoredState || { ...state, variant: id, selected: null };
-    const group = entry.layout.schedule_groups.find(item => item.code === nextState.selected);
-    if (!group || (nextState.room !== "all" && group.room !== nextState.room)) nextState.selected = null;
+    const group = nextState.selected?.startsWith("@") ? entry.plan.points.find(p=>`@${p.id}`===nextState.selected) : entry.layout.schedule_groups.find(item => item.code === nextState.selected);
+    if (!group || (group.room && nextState.room !== "all" && group.room !== nextState.room)) nextState.selected = null;
     // Commit variant, labels and model together only after both files succeeded.
-    viewer.setModel(entry.model, entry.layout);
+    viewer.setModel(entry.model, entry.layout, entry.plan);
     layout = entry.layout;
+    installationPlan = entry.plan;
     state = nextState;
     busy = false;
     $("#equipment-search").value = "";
@@ -253,6 +281,17 @@ for (const button of all("[data-projection]")) button.addEventListener("click", 
   state.projection = button.dataset.projection;
   updateView({ refit: true });
 });
+for (const button of all("[data-mode]")) button.addEventListener("click", () => {
+  state.mode=button.dataset.mode; state.selected=null; state.layers.cables=state.mode==="installations";
+  $("#equipment-search").value=""; updateView();
+});
+for (const input of all("[data-system]")) input.addEventListener("change", () => {
+  state.systems[input.dataset.system]=input.checked;
+  if (selectedGroup()?.point && !selectedGroup().point.systems.some(s=>state.systems[s])) state.selected=null;
+  updateView();
+});
+$("#from-switch").addEventListener("click",()=>{state.layers.cables=true;state.systems={power:false,lan:true,av:false,light:false};selectGroup("@R0");});
+$("#all-installations").addEventListener("click",()=>{state.selected=null;state.layers.cables=true;state.systems={power:true,lan:true,av:true,light:true};updateView();});
 for (const key of layerNames) $(`#toggle-${key}`).addEventListener("change", event => {
   state.layers[key] = event.target.checked;
   updateView();
@@ -287,7 +326,7 @@ $("#share").addEventListener("click", async () => {
 $("#export").addEventListener("click", async () => {
   const button = $("#export");
   button.disabled = true;
-  const filename = `kognilab-${state.variant}-${state.room}-${state.projection}.png`;
+  const filename = `kognilab-${state.mode === "installations" ? "instalacje-" : ""}${state.variant}-${state.room}-${state.projection}.png`;
   try {
     const blob = await viewer.exportImage();
     if (!blob) throw new Error("Pusty obraz");

@@ -169,3 +169,26 @@ dialog dd { margin: 3px 0 0; color: var(--muted); }
   .layer-controls label { padding: 6px; }
 }
 @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+.pdf-link { display: inline-flex; align-items: center; border: 1px solid var(--accent); border-radius: 9px; padding: 8px 12px; color: var(--accent); font-size: 13px; font-weight: 650; text-decoration: none; white-space: nowrap; }
+.mode-switch { width: 100%; }
+.mode-switch button { flex: 1; }
+#installation-tools h2 { margin-bottom: 8px; }
+.system-filters { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin: 14px 0 10px; }
+.system-filters label { display: flex; gap: 7px; align-items: center; border: 1px solid var(--line); border-left: 4px solid var(--system); border-radius: 6px; padding: 9px 6px; font-size: 12px; cursor: pointer; }
+.system-filters input { accent-color: var(--system); }
+.installation-actions { display: flex; gap: 6px; }
+.installation-actions button { font-size: 11px; }
+.installation-note { font-size: 11px; line-height: 1.6; margin-top: 10px; color: var(--muted); }
+.installation-key { position: absolute; bottom: 60px; left: 24px; max-width: calc(100% - 230px); padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; background: #ffffffee; display: flex; flex-wrap: wrap; gap: 8px 12px; font-size: 10px; pointer-events: none; }
+.installation-key span::before { content: ""; display: inline-block; width: 17px; height: 3px; background: currentColor; vertical-align: middle; margin-right: 5px; }
+.key-power { color: #c65a15; }.key-lan { color: #007bba; }.key-av { color: #a52c86; }.key-light { color: #7861b3; }
+.installation-key small { flex-basis: 100%; font-size: 9px; color: var(--muted); }
+@media (max-width: 760px) {
+  .pdf-link { padding: 6px; font-size: 10px; }
+  .header-actions #share, .header-actions #export { font-size: 0; width: 36px; padding: 4px; }
+  .header-actions #share::after { content: "Link"; font-size: 10px; }
+  .header-actions #export::after { content: "PNG"; font-size: 10px; }
+  .installation-key { left: 12px; bottom: 100px; max-width: calc(100% - 24px); padding: 7px 9px; gap: 5px 10px; font-size: 9px; }
+  .installation-key small { display: none; }
+  .mode-switch button { font-size: 12px; }
+}
