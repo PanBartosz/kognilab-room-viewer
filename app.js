@@ -181,11 +181,11 @@ async function fetchVariant(id) {
     const config = variants[id];
     const signal = AbortSignal.timeout(30000);
     const [nextLayout, buffer] = await Promise.all([
-      fetch(config.layout, { signal }).then(response => {
+      fetch(config.layout, { signal, cache: "no-cache" }).then(response => {
         if (!response.ok) throw new Error(`Layout: HTTP ${response.status}`);
         return response.json();
       }),
-      fetch(config.model, { signal }).then(response => {
+      fetch(config.model, { signal, cache: "no-cache" }).then(response => {
         if (!response.ok) throw new Error(`Model: HTTP ${response.status}`);
         return response.arrayBuffer();
       }),
