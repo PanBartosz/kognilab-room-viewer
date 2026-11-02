@@ -57,20 +57,26 @@ export function createInstallations(scene) {
     for (const edge of plan.edges) {
       const [a, b] = edge.points.map(position);
       const direction = b.clone().sub(a).normalize();
-      let lateral = new THREE.Vector3().crossVectors(direction, up);
-      if (lateral.lengthSq() < 0.01) lateral.set(1, 0, 0);
-      lateral.normalize();
       const duct = new THREE.Mesh(box, new THREE.MeshBasicMaterial({ color: "#859398",
         transparent: true, opacity: 0.22, depthWrite: false }));
       duct.position.copy(a).add(b).multiplyScalar(0.5);
-      duct.quaternion.setFromUnitVectors(up, direction);
+      // Keep the shallow face against the ceiling, also across the room and
+      // along its slope. Rotating only the length axis rolls transverse ducts.
+      let normal = position(edge.surface_normal || [0, 0, 1]).normalize();
+      normal.addScaledVector(direction, -normal.dot(direction));
+      if (normal.lengthSq() < 0.01) normal.set(0, 0, 1);
+      normal.normalize();
+      const across = new THREE.Vector3().crossVectors(direction, normal).normalize();
+      const lateral = across;
+      duct.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(across, direction, normal));
       duct.scale.set(0.105, a.distanceTo(b), 0.05);
       root.add(duct);
       const wires = edge.systems.map(system => {
         const order = ["power", "lan", "av", "light"].indexOf(system);
         const offset = lateral.clone().multiplyScalar((order - 1.5) * 0.026);
         const mesh = segment(a.clone().add(offset), b.clone().add(offset), plan.systems[system].color, 0.013, 1, 22 + order);
-        mesh.userData = { system, edge: edge.id, label: edge.label || `${plan.systems[system].label} · ${edge.kind === "high" ? "trasa górna" : "do punktu"}` };
+        const kind = { high: "pod płaskim sufitem", slope: "wzdłuż skosu", eave: "przy tylnej ścianie", drop: "odgałęzienie do punktu" }[edge.kind] || "do punktu";
+        mesh.userData = { system, edge: edge.id, label: edge.label || `${plan.systems[system].label} · ${kind}` };
         picks.push(mesh);
         return { mesh, system };
       });

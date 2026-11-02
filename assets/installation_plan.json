@@ -1,5 +1,5 @@
 {
-  "version": "2026-11-02",
+  "version": "2026-11-02-slope-review",
   "title": "Instalacje 307 / 308 - propozycja dla wykonawcy",
   "coordinates": "metres: X/Y floor plan, Z above finished floor; common proposal for A/B",
   "systems": {
@@ -44,7 +44,7 @@
     "S2": [
       0.08,
       3.35,
-      1.4
+      1.6
     ],
     "S3": [
       0.08,
@@ -67,7 +67,7 @@
       1.0
     ],
     "S7": [
-      6.75,
+      7.4,
       5.97,
       0.85
     ],
@@ -117,7 +117,7 @@
       2.13
     ],
     "L3a": [
-      5.05,
+      4.85,
       3.65,
       2.13
     ],
@@ -161,65 +161,20 @@
       3.7,
       2.12
     ],
-    "east308": [
-      7.86,
-      3.7,
+    "cross308w": [
+      4.11,
+      3.3,
       2.12
     ],
-    "ctrl_top": [
-      3.62,
-      3.97,
-      2.09
-    ],
-    "ctrl_low": [
-      3.62,
-      3.97,
-      1.0
-    ],
-    "gaze_top": [
-      4.11,
-      3.97,
-      2.09
-    ],
-    "gaze_low": [
-      4.11,
-      3.97,
-      1.0
-    ],
-    "vr_low": [
+    "east308": [
       7.86,
-      3.7,
-      1.0
+      3.3,
+      2.12
     ],
-    "west_mid": [
+    "prep_top": [
       0.08,
-      3.7,
-      1.4
-    ],
-    "west_low": [
-      0.08,
-      3.7,
-      1.0
-    ],
-    "west_back": [
-      0.08,
-      5.7,
-      1.0
-    ],
-    "west_rear": [
-      0.08,
-      5.97,
-      0.85
-    ],
-    "east_back": [
-      7.86,
-      5.7,
-      1.0
-    ],
-    "east_rear": [
-      7.86,
-      5.97,
-      0.85
+      3.35,
+      2.12
     ],
     "front307w": [
       0.08,
@@ -277,14 +232,74 @@
       2.12
     ],
     "light308w": [
-      5.05,
-      3.7,
+      4.85,
+      3.3,
       2.12
     ],
     "light308e": [
       6.9,
-      3.7,
+      3.3,
       2.12
+    ],
+    "ctrl_bend": [
+      3.62,
+      3.9,
+      2.12
+    ],
+    "ctrl_branch": [
+      3.62,
+      4.6,
+      1.734019
+    ],
+    "gaze_bend": [
+      4.11,
+      3.9,
+      2.12
+    ],
+    "gaze_branch": [
+      4.11,
+      4.6,
+      1.740561
+    ],
+    "vr_bend": [
+      7.86,
+      3.9,
+      2.12
+    ],
+    "vr_branch": [
+      7.86,
+      4.6,
+      1.740561
+    ],
+    "doc_bend": [
+      0.08,
+      3.9,
+      2.12
+    ],
+    "doc_branch": [
+      0.08,
+      4.68,
+      1.689907
+    ],
+    "west_rear": [
+      0.08,
+      5.97,
+      0.978598
+    ],
+    "charge_top": [
+      1.1,
+      5.97,
+      0.978598
+    ],
+    "east_rear": [
+      7.86,
+      5.97,
+      0.997944
+    ],
+    "aux_top": [
+      7.4,
+      5.97,
+      0.997944
     ]
   },
   "edges": [
@@ -575,9 +590,9 @@
       ]
     },
     {
-      "id": "west308--light308w",
+      "id": "west308--cross308w",
       "a": "west308",
-      "b": "light308w",
+      "b": "cross308w",
       "allowed": [
         "power",
         "lan",
@@ -598,8 +613,38 @@
           2.12
         ],
         [
-          5.05,
-          3.7,
+          4.11,
+          3.3,
+          2.12
+        ]
+      ]
+    },
+    {
+      "id": "cross308w--light308w",
+      "a": "cross308w",
+      "b": "light308w",
+      "allowed": [
+        "power",
+        "lan",
+        "light"
+      ],
+      "room": "308",
+      "kind": "high",
+      "label": "",
+      "systems": [
+        "power",
+        "lan",
+        "light"
+      ],
+      "points": [
+        [
+          4.11,
+          3.3,
+          2.12
+        ],
+        [
+          4.85,
+          3.3,
           2.12
         ]
       ]
@@ -615,7 +660,7 @@
       ],
       "room": "308",
       "kind": "high",
-      "label": "K2: pod płaskim sufitem, przed skosem",
+      "label": "K2: pod płaskim sufitem, przed oknem O14",
       "systems": [
         "power",
         "lan",
@@ -623,13 +668,13 @@
       ],
       "points": [
         [
-          5.05,
-          3.7,
+          4.85,
+          3.3,
           2.12
         ],
         [
           6.9,
-          3.7,
+          3.3,
           2.12
         ]
       ]
@@ -654,26 +699,26 @@
       "points": [
         [
           6.9,
-          3.7,
+          3.3,
           2.12
         ],
         [
           7.86,
-          3.7,
+          3.3,
           2.12
         ]
       ]
     },
     {
-      "id": "east307--ctrl_top",
+      "id": "east307--ctrl_bend",
       "a": "east307",
-      "b": "ctrl_top",
+      "b": "ctrl_bend",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "307",
-      "kind": "drop",
+      "kind": "high",
       "label": "",
       "systems": [
         "power",
@@ -687,22 +732,22 @@
         ],
         [
           3.62,
-          3.97,
-          2.09
+          3.9,
+          2.12
         ]
       ]
     },
     {
-      "id": "ctrl_top--ctrl_low",
-      "a": "ctrl_top",
-      "b": "ctrl_low",
+      "id": "ctrl_bend--ctrl_branch",
+      "a": "ctrl_bend",
+      "b": "ctrl_branch",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "307",
-      "kind": "drop",
-      "label": "",
+      "kind": "slope",
+      "label": "Kanał wzdłuż skosu",
       "systems": [
         "power",
         "lan"
@@ -710,27 +755,32 @@
       "points": [
         [
           3.62,
-          3.97,
-          2.09
+          3.9,
+          2.12
         ],
         [
           3.62,
-          3.97,
-          1.0
+          4.6,
+          1.734019
         ]
+      ],
+      "surface_normal": [
+        0,
+        0.5514018691588786,
+        1
       ]
     },
     {
-      "id": "ctrl_low--S1",
-      "a": "ctrl_low",
+      "id": "ctrl_branch--S1",
+      "a": "ctrl_branch",
       "b": "S1",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "307",
-      "kind": "low",
-      "label": "",
+      "kind": "drop",
+      "label": "Odgałęzienie do gniazd",
       "systems": [
         "power",
         "lan"
@@ -738,8 +788,8 @@
       "points": [
         [
           3.62,
-          3.97,
-          1.0
+          4.6,
+          1.734019
         ],
         [
           3.62,
@@ -749,15 +799,15 @@
       ]
     },
     {
-      "id": "west308--gaze_top",
+      "id": "west308--gaze_bend",
       "a": "west308",
-      "b": "gaze_top",
+      "b": "gaze_bend",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "308",
-      "kind": "drop",
+      "kind": "high",
       "label": "",
       "systems": [
         "power",
@@ -771,22 +821,22 @@
         ],
         [
           4.11,
-          3.97,
-          2.09
+          3.9,
+          2.12
         ]
       ]
     },
     {
-      "id": "gaze_top--gaze_low",
-      "a": "gaze_top",
-      "b": "gaze_low",
+      "id": "gaze_bend--gaze_branch",
+      "a": "gaze_bend",
+      "b": "gaze_branch",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "308",
-      "kind": "drop",
-      "label": "",
+      "kind": "slope",
+      "label": "Kanał wzdłuż skosu",
       "systems": [
         "power",
         "lan"
@@ -794,27 +844,32 @@
       "points": [
         [
           4.11,
-          3.97,
-          2.09
+          3.9,
+          2.12
         ],
         [
           4.11,
-          3.97,
-          1.0
+          4.6,
+          1.740561
         ]
+      ],
+      "surface_normal": [
+        0,
+        0.5420560747663552,
+        1
       ]
     },
     {
-      "id": "gaze_low--S5",
-      "a": "gaze_low",
+      "id": "gaze_branch--S5",
+      "a": "gaze_branch",
       "b": "S5",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "308",
-      "kind": "low",
-      "label": "",
+      "kind": "drop",
+      "label": "Odgałęzienie do gniazd",
       "systems": [
         "power",
         "lan"
@@ -822,8 +877,8 @@
       "points": [
         [
           4.11,
-          3.97,
-          1.0
+          4.6,
+          1.740561
         ],
         [
           4.11,
@@ -833,15 +888,15 @@
       ]
     },
     {
-      "id": "east308--vr_low",
+      "id": "east308--vr_bend",
       "a": "east308",
-      "b": "vr_low",
+      "b": "vr_bend",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "308",
-      "kind": "drop",
+      "kind": "high",
       "label": "",
       "systems": [
         "power",
@@ -850,27 +905,60 @@
       "points": [
         [
           7.86,
-          3.7,
+          3.3,
           2.12
         ],
         [
           7.86,
-          3.7,
-          1.0
+          3.9,
+          2.12
         ]
       ]
     },
     {
-      "id": "vr_low--S6",
-      "a": "vr_low",
+      "id": "vr_bend--vr_branch",
+      "a": "vr_bend",
+      "b": "vr_branch",
+      "allowed": [
+        "power",
+        "lan"
+      ],
+      "room": "308",
+      "kind": "slope",
+      "label": "Kanał wzdłuż skosu",
+      "systems": [
+        "power",
+        "lan"
+      ],
+      "points": [
+        [
+          7.86,
+          3.9,
+          2.12
+        ],
+        [
+          7.86,
+          4.6,
+          1.740561
+        ]
+      ],
+      "surface_normal": [
+        0,
+        0.5420560747663552,
+        1
+      ]
+    },
+    {
+      "id": "vr_branch--S6",
+      "a": "vr_branch",
       "b": "S6",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "308",
-      "kind": "low",
-      "label": "",
+      "kind": "drop",
+      "label": "Odgałęzienie do gniazd",
       "systems": [
         "power",
         "lan"
@@ -878,8 +966,8 @@
       "points": [
         [
           7.86,
-          3.7,
-          1.0
+          4.6,
+          1.740561
         ],
         [
           7.86,
@@ -889,15 +977,15 @@
       ]
     },
     {
-      "id": "west307--west_mid",
+      "id": "west307--doc_bend",
       "a": "west307",
-      "b": "west_mid",
+      "b": "doc_bend",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "307",
-      "kind": "drop",
+      "kind": "high",
       "label": "",
       "systems": [
         "power",
@@ -911,21 +999,82 @@
         ],
         [
           0.08,
-          3.7,
-          1.4
+          3.9,
+          2.12
         ]
       ]
     },
     {
-      "id": "west_mid--S2",
-      "a": "west_mid",
-      "b": "S2",
+      "id": "doc_bend--doc_branch",
+      "a": "doc_bend",
+      "b": "doc_branch",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "307",
-      "kind": "low",
+      "kind": "slope",
+      "label": "Kanał wzdłuż skosu",
+      "systems": [
+        "power",
+        "lan"
+      ],
+      "points": [
+        [
+          0.08,
+          3.9,
+          2.12
+        ],
+        [
+          0.08,
+          4.68,
+          1.689907
+        ]
+      ],
+      "surface_normal": [
+        0,
+        0.5514018691588786,
+        1
+      ]
+    },
+    {
+      "id": "doc_branch--S3",
+      "a": "doc_branch",
+      "b": "S3",
+      "allowed": [
+        "power",
+        "lan"
+      ],
+      "room": "307",
+      "kind": "drop",
+      "label": "Odgałęzienie do gniazd",
+      "systems": [
+        "power",
+        "lan"
+      ],
+      "points": [
+        [
+          0.08,
+          4.68,
+          1.689907
+        ],
+        [
+          0.08,
+          4.68,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "west307--prep_top",
+      "a": "west307",
+      "b": "prep_top",
+      "allowed": [
+        "power",
+        "lan"
+      ],
+      "room": "307",
+      "kind": "high",
       "label": "",
       "systems": [
         "power",
@@ -935,19 +1084,19 @@
         [
           0.08,
           3.7,
-          1.4
+          2.12
         ],
         [
           0.08,
           3.35,
-          1.4
+          2.12
         ]
       ]
     },
     {
-      "id": "west_mid--west_low",
-      "a": "west_mid",
-      "b": "west_low",
+      "id": "prep_top--S2",
+      "a": "prep_top",
+      "b": "S2",
       "allowed": [
         "power",
         "lan"
@@ -962,79 +1111,25 @@
       "points": [
         [
           0.08,
-          3.7,
-          1.4
+          3.35,
+          2.12
         ],
         [
           0.08,
-          3.7,
-          1.0
+          3.35,
+          1.6
         ]
       ]
     },
     {
-      "id": "west_low--S3",
-      "a": "west_low",
-      "b": "S3",
-      "allowed": [
-        "power",
-        "lan"
-      ],
-      "room": "307",
-      "kind": "low",
-      "label": "",
-      "systems": [
-        "power",
-        "lan"
-      ],
-      "points": [
-        [
-          0.08,
-          3.7,
-          1.0
-        ],
-        [
-          0.08,
-          4.68,
-          1.0
-        ]
-      ]
-    },
-    {
-      "id": "S3--west_back",
-      "a": "S3",
-      "b": "west_back",
-      "allowed": [
-        "power"
-      ],
-      "room": "307",
-      "kind": "low",
-      "label": "",
-      "systems": [
-        "power"
-      ],
-      "points": [
-        [
-          0.08,
-          4.68,
-          1.0
-        ],
-        [
-          0.08,
-          5.7,
-          1.0
-        ]
-      ]
-    },
-    {
-      "id": "west_back--west_rear",
-      "a": "west_back",
+      "id": "doc_branch--west_rear",
+      "a": "doc_branch",
       "b": "west_rear",
       "allowed": [
         "power"
       ],
       "room": "307",
-      "kind": "low",
+      "kind": "slope",
       "label": "",
       "systems": [
         "power"
@@ -1042,34 +1137,70 @@
       "points": [
         [
           0.08,
-          5.7,
-          1.0
+          4.68,
+          1.689907
         ],
         [
           0.08,
           5.97,
-          0.85
+          0.978598
         ]
+      ],
+      "surface_normal": [
+        0,
+        0.5514018691588786,
+        1
       ]
     },
     {
-      "id": "west_rear--S4",
+      "id": "west_rear--charge_top",
       "a": "west_rear",
+      "b": "charge_top",
+      "allowed": [
+        "power"
+      ],
+      "room": "307",
+      "kind": "eave",
+      "label": "",
+      "systems": [
+        "power"
+      ],
+      "points": [
+        [
+          0.08,
+          5.97,
+          0.978598
+        ],
+        [
+          1.1,
+          5.97,
+          0.978598
+        ]
+      ],
+      "surface_normal": [
+        0,
+        0.5514018691588786,
+        1
+      ]
+    },
+    {
+      "id": "charge_top--S4",
+      "a": "charge_top",
       "b": "S4",
       "allowed": [
         "power"
       ],
       "room": "307",
-      "kind": "low",
+      "kind": "drop",
       "label": "",
       "systems": [
         "power"
       ],
       "points": [
         [
-          0.08,
+          1.1,
           5.97,
-          0.85
+          0.978598
         ],
         [
           1.1,
@@ -1079,15 +1210,15 @@
       ]
     },
     {
-      "id": "S6--east_back",
-      "a": "S6",
-      "b": "east_back",
+      "id": "vr_branch--east_rear",
+      "a": "vr_branch",
+      "b": "east_rear",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "308",
-      "kind": "low",
+      "kind": "slope",
       "label": "",
       "systems": [
         "power",
@@ -1097,25 +1228,30 @@
         [
           7.86,
           4.6,
-          1.0
+          1.740561
         ],
         [
           7.86,
-          5.7,
-          1.0
+          5.97,
+          0.997944
         ]
+      ],
+      "surface_normal": [
+        0,
+        0.5420560747663552,
+        1
       ]
     },
     {
-      "id": "east_back--east_rear",
-      "a": "east_back",
-      "b": "east_rear",
+      "id": "east_rear--aux_top",
+      "a": "east_rear",
+      "b": "aux_top",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "308",
-      "kind": "low",
+      "kind": "eave",
       "label": "",
       "systems": [
         "power",
@@ -1124,26 +1260,31 @@
       "points": [
         [
           7.86,
-          5.7,
-          1.0
+          5.97,
+          0.997944
         ],
         [
-          7.86,
+          7.4,
           5.97,
-          0.85
+          0.997944
         ]
+      ],
+      "surface_normal": [
+        0,
+        0.5420560747663552,
+        1
       ]
     },
     {
-      "id": "east_rear--S7",
-      "a": "east_rear",
+      "id": "aux_top--S7",
+      "a": "aux_top",
       "b": "S7",
       "allowed": [
         "power",
         "lan"
       ],
       "room": "308",
-      "kind": "low",
+      "kind": "drop",
       "label": "",
       "systems": [
         "power",
@@ -1151,20 +1292,20 @@
       ],
       "points": [
         [
-          7.86,
+          7.4,
           5.97,
-          0.85
+          0.997944
         ],
         [
-          6.75,
+          7.4,
           5.97,
           0.85
         ]
       ]
     },
     {
-      "id": "west307--front307w",
-      "a": "west307",
+      "id": "prep_top--front307w",
+      "a": "prep_top",
       "b": "front307w",
       "allowed": [
         "power"
@@ -1178,7 +1319,7 @@
       "points": [
         [
           0.08,
-          3.7,
+          3.35,
           2.12
         ],
         [
@@ -1336,7 +1477,7 @@
       "points": [
         [
           7.86,
-          3.7,
+          3.3,
           2.12
         ],
         [
@@ -1597,20 +1738,20 @@
       ],
       "points": [
         [
-          5.05,
-          3.7,
+          4.85,
+          3.3,
           2.12
         ],
         [
-          5.05,
+          4.85,
           3.65,
           2.13
         ]
       ]
     },
     {
-      "id": "L3a--L2a",
-      "a": "L3a",
+      "id": "light308w--L2a",
+      "a": "light308w",
       "b": "L2a",
       "allowed": [
         "light"
@@ -1623,9 +1764,9 @@
       ],
       "points": [
         [
-          5.05,
-          3.65,
-          2.13
+          4.85,
+          3.3,
+          2.12
         ],
         [
           5.05,
@@ -1650,7 +1791,7 @@
       "points": [
         [
           6.9,
-          3.7,
+          3.3,
           2.12
         ],
         [
@@ -1661,8 +1802,8 @@
       ]
     },
     {
-      "id": "L3b--L2b",
-      "a": "L3b",
+      "id": "light308e--L2b",
+      "a": "light308e",
       "b": "L2b",
       "allowed": [
         "light"
@@ -1676,8 +1817,8 @@
       "points": [
         [
           6.9,
-          3.65,
-          2.13
+          3.3,
+          2.12
         ],
         [
           6.9,
@@ -1752,7 +1893,7 @@
       "sockets": 0,
       "lan": 0,
       "kind": "rack",
-      "note": "Początek wszystkich 13 łączy LAN. W szafce zakończenia i opis portów; NAS łączy się lokalnym patchcordem. Sprawdzić wolne porty i PoE+.",
+      "note": "Początek 13 proponowanych łączy LAN. Zakończyć je na patchpanelu; do switcha wpiąć używane porty. PoE z istniejącego switcha potwierdzono 28.10.2026. Spisać wolne porty i uplink do sieci budynku. NAS: lokalny patchcord i wentylowane miejsce przy szafce.",
       "label_offset": [
         -0.5,
         -0.12
@@ -1816,7 +1957,7 @@
       "sockets": 6,
       "lan": 2,
       "kind": "outlet",
-      "note": "A i B: przy biurku na ścianie wspólnej. Obok przepust X2: USB 3.0 i DisplayPort do Gazepointa w 308.",
+      "note": "A i B: przy biurku na ścianie wspólnej. Obok X2: USB 3.0 do Gazepointa oraz DisplayPort do monitora w 308. PC klasy RTX 5080 pozostaje w przetargu.",
       "label_offset": [
         -0.48,
         0.18
@@ -1832,14 +1973,14 @@
       "position": [
         0.08,
         3.35,
-        1.4
+        1.6
       ],
       "room": "307",
       "label": "Przygotowanie / rezerwa",
       "sockets": 2,
       "lan": 2,
       "kind": "outlet",
-      "note": "A: stół przygotowania; B: nad szafką 122 cm, dostępna rezerwa. Gniazda na wysokości 140 cm.",
+      "note": "A: stół przygotowania; B: nad szafką 122 cm i drukarką. Proponowane 160 cm zapewnia dostęp ponad ich modelowanym gabarytem; po ustawieniu drukarki sprawdzić miejsce na bank gniazd.",
       "label_offset": [
         0.43,
         -0.1
@@ -1904,7 +2045,7 @@
       "sockets": 4,
       "lan": 2,
       "kind": "outlet",
-      "note": "Gazepoint GP3 HD 150 Hz (model do potwierdzenia). USB 3.0 i obraz z PC S1 przez X2; wykonać próbę przed zamknięciem kanałów.",
+      "note": "Gazepoint GP3 HD 150 Hz (model do odczytania z urządzenia). USB 3.0 do trackera, DisplayPort do monitora z PC S1 przez X2; przedłużenia sprawdzić na sprzęcie. Producent podaje ekran do 24 cali; planowany monitor 27 cali nie jest potwierdzonym zestawem.",
       "label_offset": [
         0.42,
         0.1
@@ -1927,7 +2068,7 @@
       "sockets": 6,
       "lan": 2,
       "kind": "outlet",
-      "note": "Gniazda przy ścianie za biurkiem A lub ramieniem U w B. Streaming Kit i gogle podłącza się lokalnie; brak przewodu przez środek pola VR.",
+      "note": "Gniazda przy ścianie za biurkiem A lub ramieniem U w B. PC klasy RTX 5090 w przetargu; UPS i Streaming Kit kupione. Kabel do gogli jest ruchomy: sposób prowadzenia ustalić podczas próby VR. Rysunek pokazuje instalację stałą.",
       "label_offset": [
         -0.42,
         -0.15
@@ -1940,7 +2081,7 @@
     {
       "id": "S7",
       "position": [
-        6.75,
+        7.4,
         5.97,
         0.85
       ],
@@ -1949,9 +2090,9 @@
       "sockets": 2,
       "lan": 2,
       "kind": "outlet",
-      "note": "B: przewody od ściany do blatu w koszu pod zabudową, poza strefą ruchu. A: rezerwa. Punkt na prawo od grzejnika; nie zasłaniać grzejnika.",
+      "note": "B: przewody od ściany do blatu w koszu pod zabudową, poza strefą ruchu. A: rezerwa. Punkt na prawo od grzejnika i miejsca parkowania wózka; zachować dostęp do gniazd.",
       "label_offset": [
-        0.0,
+        -0.1,
         -0.33
       ],
       "systems": [
@@ -2013,7 +2154,7 @@
       "sockets": 0,
       "lan": 1,
       "kind": "ap",
-      "note": "Jedno łącze Cat 6A do switcha R0, zasilanie PoE+. Bez dodatkowego gniazda 230 V. Proponowany montaż na ścianie, środek około 195 cm.",
+      "note": "Kupiony U7 Pro; jedno łącze Cat 6A do R0, zasilanie PoE+ z istniejącego switcha. Proponowany montaż na ścianie, środek około 195 cm. Po montażu test zasięgu i transmisji z goglami.",
       "label_offset": [
         -0.12,
         0.34
@@ -2151,7 +2292,7 @@
     {
       "id": "L3a",
       "position": [
-        5.05,
+        4.85,
         3.65,
         2.13
       ],
@@ -2225,7 +2366,7 @@
       "sockets": 0,
       "lan": 0,
       "kind": "av",
-      "note": "S1 (PC w 307) ↔ S5 (Gazepoint w 308). Dwie gładkie tuleje, roboczo światło 40-50 mm, pilot i demontowalne zakończenia; sprawdzić przejście wtyków. Przewody dobiera integrator.",
+      "note": "S1 (PC w 307) ↔ S5 (Gazepoint i monitor w 308). Drożny przepust z pilotem i demontowalnymi zakończeniami, dobrany do gotowych wtyków USB/DP oraz promieni gięcia. Przewody dobiera i testuje integrator.",
       "label_offset": [
         0.0,
         0.52
@@ -2254,9 +2395,9 @@
       "quantity": 6,
       "edges": [
         "E0--east307",
-        "east307--ctrl_top",
-        "ctrl_top--ctrl_low",
-        "ctrl_low--S1"
+        "east307--ctrl_bend",
+        "ctrl_bend--ctrl_branch",
+        "ctrl_branch--S1"
       ]
     },
     {
@@ -2270,9 +2411,9 @@
         "rack_elbow--rack_top",
         "rack_top--E0",
         "E0--east307",
-        "east307--ctrl_top",
-        "ctrl_top--ctrl_low",
-        "ctrl_low--S1"
+        "east307--ctrl_bend",
+        "ctrl_bend--ctrl_branch",
+        "ctrl_branch--S1"
       ]
     },
     {
@@ -2286,8 +2427,8 @@
         "east307--light307e",
         "light307e--light307w",
         "light307w--west307",
-        "west307--west_mid",
-        "west_mid--S2"
+        "west307--prep_top",
+        "prep_top--S2"
       ]
     },
     {
@@ -2304,8 +2445,8 @@
         "east307--light307e",
         "light307e--light307w",
         "light307w--west307",
-        "west307--west_mid",
-        "west_mid--S2"
+        "west307--prep_top",
+        "prep_top--S2"
       ]
     },
     {
@@ -2319,9 +2460,9 @@
         "east307--light307e",
         "light307e--light307w",
         "light307w--west307",
-        "west307--west_mid",
-        "west_mid--west_low",
-        "west_low--S3"
+        "west307--doc_bend",
+        "doc_bend--doc_branch",
+        "doc_branch--S3"
       ]
     },
     {
@@ -2338,9 +2479,9 @@
         "east307--light307e",
         "light307e--light307w",
         "light307w--west307",
-        "west307--west_mid",
-        "west_mid--west_low",
-        "west_low--S3"
+        "west307--doc_bend",
+        "doc_bend--doc_branch",
+        "doc_branch--S3"
       ]
     },
     {
@@ -2354,12 +2495,11 @@
         "east307--light307e",
         "light307e--light307w",
         "light307w--west307",
-        "west307--west_mid",
-        "west_mid--west_low",
-        "west_low--S3",
-        "S3--west_back",
-        "west_back--west_rear",
-        "west_rear--S4"
+        "west307--doc_bend",
+        "doc_bend--doc_branch",
+        "doc_branch--west_rear",
+        "west_rear--charge_top",
+        "charge_top--S4"
       ]
     },
     {
@@ -2372,9 +2512,9 @@
         "E0--east307",
         "east307--X1",
         "X1--west308",
-        "west308--gaze_top",
-        "gaze_top--gaze_low",
-        "gaze_low--S5"
+        "west308--gaze_bend",
+        "gaze_bend--gaze_branch",
+        "gaze_branch--S5"
       ]
     },
     {
@@ -2390,9 +2530,9 @@
         "E0--east307",
         "east307--X1",
         "X1--west308",
-        "west308--gaze_top",
-        "gaze_top--gaze_low",
-        "gaze_low--S5"
+        "west308--gaze_bend",
+        "gaze_bend--gaze_branch",
+        "gaze_branch--S5"
       ]
     },
     {
@@ -2405,11 +2545,13 @@
         "E0--east307",
         "east307--X1",
         "X1--west308",
-        "west308--light308w",
+        "west308--cross308w",
+        "cross308w--light308w",
         "light308w--light308e",
         "light308e--east308",
-        "east308--vr_low",
-        "vr_low--S6"
+        "east308--vr_bend",
+        "vr_bend--vr_branch",
+        "vr_branch--S6"
       ]
     },
     {
@@ -2425,11 +2567,13 @@
         "E0--east307",
         "east307--X1",
         "X1--west308",
-        "west308--light308w",
+        "west308--cross308w",
+        "cross308w--light308w",
         "light308w--light308e",
         "light308e--east308",
-        "east308--vr_low",
-        "vr_low--S6"
+        "east308--vr_bend",
+        "vr_bend--vr_branch",
+        "vr_branch--S6"
       ]
     },
     {
@@ -2442,14 +2586,15 @@
         "E0--east307",
         "east307--X1",
         "X1--west308",
-        "west308--light308w",
+        "west308--cross308w",
+        "cross308w--light308w",
         "light308w--light308e",
         "light308e--east308",
-        "east308--vr_low",
-        "vr_low--S6",
-        "S6--east_back",
-        "east_back--east_rear",
-        "east_rear--S7"
+        "east308--vr_bend",
+        "vr_bend--vr_branch",
+        "vr_branch--east_rear",
+        "east_rear--aux_top",
+        "aux_top--S7"
       ]
     },
     {
@@ -2465,14 +2610,15 @@
         "E0--east307",
         "east307--X1",
         "X1--west308",
-        "west308--light308w",
+        "west308--cross308w",
+        "cross308w--light308w",
         "light308w--light308e",
         "light308e--east308",
-        "east308--vr_low",
-        "vr_low--S6",
-        "S6--east_back",
-        "east_back--east_rear",
-        "east_rear--S7"
+        "east308--vr_bend",
+        "vr_bend--vr_branch",
+        "vr_branch--east_rear",
+        "east_rear--aux_top",
+        "aux_top--S7"
       ]
     },
     {
@@ -2486,7 +2632,8 @@
         "east307--light307e",
         "light307e--light307w",
         "light307w--west307",
-        "west307--front307w",
+        "west307--prep_top",
+        "prep_top--front307w",
         "front307w--service307top",
         "service307top--T1"
       ]
@@ -2519,7 +2666,8 @@
         "E0--east307",
         "east307--X1",
         "X1--west308",
-        "west308--light308w",
+        "west308--cross308w",
+        "cross308w--light308w",
         "light308w--light308e",
         "light308e--east308",
         "east308--front308e",
@@ -2550,7 +2698,8 @@
         "E0--east307",
         "east307--X1",
         "X1--west308",
-        "west308--light308w",
+        "west308--cross308w",
+        "cross308w--light308w",
         "light308w--light308e",
         "light308e--east308",
         "east308--front308e",
@@ -2594,9 +2743,9 @@
         "E0--east307",
         "east307--X1",
         "X1--west308",
-        "west308--light308w",
-        "light308w--L3a",
-        "L3a--L2a"
+        "west308--cross308w",
+        "cross308w--light308w",
+        "light308w--L2a"
       ]
     },
     {
@@ -2609,10 +2758,10 @@
         "E0--east307",
         "east307--X1",
         "X1--west308",
-        "west308--light308w",
+        "west308--cross308w",
+        "cross308w--light308w",
         "light308w--light308e",
-        "light308e--L3b",
-        "L3b--L2b"
+        "light308e--L2b"
       ]
     },
     {
@@ -2625,7 +2774,8 @@
         "E0--east307",
         "east307--X1",
         "X1--west308",
-        "west308--light308w",
+        "west308--cross308w",
+        "cross308w--light308w",
         "light308w--L3a"
       ]
     },
@@ -2639,7 +2789,8 @@
         "E0--east307",
         "east307--X1",
         "X1--west308",
-        "west308--light308w",
+        "west308--cross308w",
+        "cross308w--light308w",
         "light308w--light308e",
         "light308e--L3b"
       ]
@@ -2663,12 +2814,13 @@
   },
   "notes": [
     "Wspólna propozycja tras i punktów dla aranżacji A/B; położenia dopasować na miejscu.",
-    "Główna trasa: oś 2,12 m, przy ścianach i przy początku skosu. Kanał płaski, przy powierzchni; bez podwieszania.",
-    "Pod skosami: pionowe zejścia i dalsza trasa po ścianie na 1,00 m; przy tylnej ścianie 0,85 m. Bez kanałów przez środek podłogi.",
+    "Na płaskim suficie oś około 2,12 m. W 308 poprzeczna trasa przed obrysem okna O14. Kanał przy powierzchni.",
+    "Przy ścianach bocznych kanał biegnie dalej po skosie, z połączeniem dopasowanym do kąta. Pionowe odgałęzienia dopiero nad gniazdami; wysokość gniazd 1,00 / 0,85 m nie wyznacza wysokości całej trasy.",
     "LAN w gwiazdę: 13 osobnych łączy Cat 6A od R0. Linie na rysunku oznaczają wspólną trasę, nie łączenie gniazd szeregowo.",
     "230 V i niskoprąd oddzielić przegrodą lub osobnymi kanałami. Światło: osobne sterowanie, trasy pokazane koncepcyjnie.",
-    "Kanał główny: do wstępnej wyceny około 105 x 50 mm, z rezerwą 30%. Wymiary i podział dobiera wykonawca.",
+    "Model pokazuje przebieg osi. Wymiary kanałów dobiera wykonawca do wiązek, przegród i promieni gięcia, z rezerwą na rozbudowę; gabaryt graficzny nie jest specyfikacją zakupową.",
     "E0 jest proponowanym wejściem zasilania, nie znalezioną rozdzielnicą. Obwody, zabezpieczenia i przekroje dobiera elektryk.",
-    "X2: krótki tor USB 3.0 i DisplayPort między S1 i S5. Długość i przedłużenie sprawdzić z Gazepointem przed montażem."
+    "X2: krótki tor USB 3.0 i DisplayPort między S1 i S5. Długość i przedłużenie sprawdzić z Gazepointem przed montażem.",
+    "34 gniazda, 13 łączy LAN i 6 opraw to propozycja z rezerwą. Posiadanie switcha i zapewnienie PoE są potwierdzone; liczba wolnych portów nie jest znana."
   ]
 }

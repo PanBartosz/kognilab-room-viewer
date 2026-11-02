@@ -29,7 +29,7 @@
           <div class="segmented mode-switch" role="group" aria-label="Cel widoku"><button type="button" data-mode="installations" aria-pressed="true">Instalacje</button><button type="button" data-mode="equipment" aria-pressed="false">Wyposażenie</button></div>
           <section id="installation-tools" aria-labelledby="installation-heading">
             <p class="eyebrow">Plan dla wykonawcy</p><h2 id="installation-heading">Trasy i przyłącza</h2>
-            <p class="muted">Górą do stanowisk, pionowo do gniazd. Kliknij punkt, aby zobaczyć jego połączenia i wysokość.</p>
+            <p class="muted">Pod sufitem i dalej po skosach przy ścianach. Odgałęzienia schodzą do gniazd. Kliknij punkt, aby zobaczyć jego połączenia i wysokość.</p>
             <div class="system-filters">
               <label style="--system:#c65a15"><input type="checkbox" data-system="power" checked />230 V</label>
               <label style="--system:#007bba"><input type="checkbox" data-system="lan" checked />LAN / PoE</label>
@@ -38,6 +38,7 @@
             </div>
             <div class="installation-actions"><button id="from-switch" type="button">Od switcha R0</button><button id="all-installations" type="button">Wszystkie</button></div>
             <p class="installation-note"><strong>R0</strong> = istniejący switch. <strong>E0</strong> = proponowane wejście zasilania z budynku, do ustalenia przez elektryka.</p>
+            <details class="project-notes"><summary>Podstawa i zakres propozycji</summary><p>Szafka ze switchem i zapewnienie PoE są potwierdzone. Wysokości pomieszczeń potwierdzono orientacyjnym pomiarem.</p><p>34 gniazda, 13 łączy LAN, 6 pozycji opraw oraz przebieg kanałów i przepustów to propozycja z rezerwą do wyceny. Przekroje kanałów dobiera wykonawca do przewodów i miejsca montażu.</p><p>Rysunek pokazuje instalację stałą. Ruchomy kabel gogli i przedłużenie USB Gazepointa wymagają próby z aparaturą.</p></details>
           </section>
           <section aria-labelledby="variant-heading">
             <p class="eyebrow">01 / Aranżacja</p>
@@ -81,7 +82,7 @@
           </div>
         </div>
         <canvas id="scene" tabindex="0" aria-label="Model pomieszczeń. Strzałki przesuwają widok, plus i minus przybliżają, zero przywraca kadr. Wyposażenie można wybrać również z listy."></canvas>
-        <div id="installation-key" class="installation-key"><span class="key-power">230 V</span><span class="key-lan">LAN / PoE</span><span class="key-av">USB + obraz</span><span class="key-light">Światło</span><small>Główna trasa: oś 212 cm · punkty: wysokości w opisie</small></div>
+        <div id="installation-key" class="installation-key"><span class="key-power">230 V</span><span class="key-lan">LAN / PoE</span><span class="key-av">USB + obraz</span><span class="key-light">Światło</span><small>Około 212 cm pod sufitem płaskim · dalej po skosach · wysokości gniazd w opisie</small></div>
         <div class="layer-controls" role="group" aria-label="Warstwy modelu">
           <label><input type="checkbox" id="toggle-walls" checked />Ściany</label>
           <label id="ceilings-label"><input type="checkbox" id="toggle-ceilings" />Skosy</label>

@@ -6,7 +6,9 @@ Interaktywny viewer 3D dwóch wariantów aranżacji pomieszczeń KogniLabu 307 i
 
 Domyślny tryb „Instalacje” pokazuje nową propozycję 230 V, LAN/PoE, USB/DisplayPort i oświetlenia. Przycisk „Wyposażenie” przywraca przegląd mebli. Każdy punkt ma kod, wysokość, liczbę przyłączy i opis; wybór wyróżnia jego trasy od właściwego źródła. „Od switcha R0” pokazuje LAN z istniejącej szafki w 307. E0 oznacza proponowane wejście zasilania budynku, którego rzeczywiste doprowadzenie ustala elektryk.
 
-Wspólna propozycja dla A/B: 34 pojedyncze gniazda 230 V, 13 łączy LAN, 6 proponowanych pozycji opraw. Górna trasa ma oś około 212 cm; przed skosami są zejścia do 100 cm, a przy tylnej ścianie do 85 cm. X2 jest krótkim przepustem aparatury na 100 cm. Są to założenia do uzgodnienia z wykonawcą.
+Wspólna propozycja dla A/B: 34 pojedyncze gniazda 230 V, 13 łączy LAN, 6 proponowanych pozycji opraw. Pod płaskim sufitem oś trasy jest na około 212 cm. Przy bocznych ścianach kanały biegną dalej równolegle do skosów; odgałęzienia schodzą dopiero nad gniazdami. Trasa poprzeczna w 308 omija obrys O14 od strony wejścia. X2 jest krótkim przepustem USB do Gazepointa i obrazu do monitora na 100 cm. Wymiary kanałów dobiera wykonawca; model pokazuje proponowany przebieg, a nie wybrany produkt.
+
+Przegląd 02.11.2026 usunął wymuszone uskoki przed skosami, przecięcie obrysu okna przez trasę K2 i oprawę L3a oraz kolizje punktów z gabarytem drukarki (S2: 160 cm) i wózka (S7: dalej w prawo). Poprawiono też orientację płaskiego przekroju kanału w 3D. PoE z istniejącego switcha jest potwierdzone w ewidencji; liczba wolnych portów pozostaje do spisania. Przedłużenie USB i ruchomy kabel gogli wymagają próby z aparaturą.
 
 - `assets/installation_plan.json`: graf tras, punkty i połączenia, wspólne z PDF. Edycję współrzędnych należy robić w `../scripts/create_installation_plan.py`, który zapisuje także źródłowy JSON w `../source/`.
 - `installations.js`: nakładka Three.js, etykiety, filtrowanie i wyróżnienie połączeń. Na małym ekranie pokazuje najważniejsze etykiety; wszystkie punkty pozostają dostępne z listy.
@@ -22,9 +24,9 @@ python3 lab_room_model/scripts/validate_installations.py
 uv run --with reportlab --with pillow --with pypdf python lab_room_model/scripts/render_installation_plan.py
 ```
 
-PDF korzysta z eksportów PNG z przeglądarki w `../output/installations/view_3d_a.png` i `view_3d_b.png`. Po zmianie geometrii tras trzeba wyeksportować oba obrazy ponownie, następnie wygenerować PDF i wykonać build. Walidator sprawdza ciągłość, 13 połączeń LAN od R0, oddzielne źródło 230 V, położenie R0 w szafce A/B i wysokość kanałów pod skosami. Nie zastępuje projektu obwodów ani pomiaru na miejscu.
+PDF korzysta z eksportów PNG z przeglądarki w `../output/installations/view_3d_a.png` i `view_3d_b.png`. Po zmianie geometrii tras trzeba wyeksportować oba obrazy ponownie, następnie wygenerować PDF i wykonać build. Walidator sprawdza ciągłość, 13 łączy LAN od R0, oddzielne źródło 230 V, położenie R0 w szafce A/B, osie i gabaryty kanałów względem sufitu, równoległość odcinków do skosów, omijanie O14 przez kanały i oprawy oraz kolizje z modelowanymi gabarytami wyposażenia. Sprawdzenie dotyczy danych modelu; nie potwierdza pomiarów na miejscu, dostępności banków gniazd za rzeczywistymi monitorami ani doboru obwodów.
 
-Weryfikacja nowego trybu: 31 sprawdzeń interakcji w Chromium (w tym wybór punktu na modelu, filtry, oba warianty, link, eksport i mobilny układ) oraz walidacja 1113 próbek wysokości tras. Skrypty i wyniki znajdują się w nadrzędnym `output/playwright/installations-*`.
+Weryfikacja trybu: sprawdzenia interakcji w Chromium (wybór punktu na modelu, filtry, oba warianty, link, eksport i mobilny układ) oraz walidacja geometrii. Skrypty i wyniki znajdują się w nadrzędnym `output/playwright/installations-*`.
 
 ## Stan i obsługa aplikacji
 
