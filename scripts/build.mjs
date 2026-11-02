@@ -44,9 +44,12 @@ for (const file of appFiles) {
 const revision = createHash("sha256");
 for (const file of appFiles) revision.update(await readFile(join(root, file)));
 const version = revision.digest("hex").slice(0, 12);
+const pdfPath = "assets/KogniLab_plan_instalacji.pdf";
+const pdfVersion = createHash("sha256").update(await readFile(join(root, pdfPath))).digest("hex").slice(0, 12);
 const index = await readFile(join(dist, "index.html"), "utf8");
 await writeFile(join(dist, "index.html"), index
   .replace('href="./styles.css"', `href="./styles.css?v=${version}"`)
+  .replace(`href="./${pdfPath}"`, `href="./${pdfPath}?v=${pdfVersion}"`)
   .replace('src="./app.js"', `src="./app.js?v=${version}"`));
 const app = await readFile(join(dist, "app.js"), "utf8");
 await writeFile(join(dist, "app.js"), app.replace('"./scene.js"', `"./scene.js?v=${version}"`));
